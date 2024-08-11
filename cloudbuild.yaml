@@ -5,7 +5,6 @@ steps:
       - >-
         $_AR_HOSTNAME/$PROJECT_ID/github.com/jimlind/$REPO_NAME-release:$SHORT_SHA
       - "--builder=gcr.io/buildpacks/builder:google-22"
-      - "--env='GOOGLE_RUNTIME_VERSION=17'"
     id: Build
   - name: gcr.io/cloud-builders/docker
     args:
