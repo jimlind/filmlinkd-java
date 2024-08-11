@@ -1,0 +1,18 @@
+steps:
+  - name: buildpacksio/pack:latest
+    args:
+      - build
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/github.com/jimlind/$REPO_NAME-release:$SHORT_SHA
+      - "--builder=gcr.io/buildpacks/builder:google-22"
+    id: Build
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - >-
+        $_AR_HOSTNAME/$PROJECT_ID/github.com/jimlind/$REPO_NAME-release:$SHORT_SHA
+    id: Push
+
+substitutions:
+  _DEPLOY_ZONE: us-central1-a
+  _AR_HOSTNAME: gcr.io
