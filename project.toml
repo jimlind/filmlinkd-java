@@ -1,5 +1,3 @@
 [[build.env]]
 name = "GOOGLE_RUNTIME_VERSION"
 value = "17"
-name = "GOOGLE_FUNCTION_TARGET"
-value = "jimlind.filmlinkd.Main"
