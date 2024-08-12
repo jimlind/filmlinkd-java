@@ -49,6 +49,7 @@ Build and run the application locally
 
 Let's get dangerous....
 `pack build filmlinkd-java-app --builder=gcr.io/buildpacks/builder:google-22`
+`docker run -it filmlinkd-java-app`
 
 Unfortunatly that doesn't work because it doesn't have the credentials it needs to actually run anything on GCP but the fact that it complains about not having credentials seems promising.
 
