@@ -48,6 +48,8 @@ Build and run the application locally
 `mvn package && java -jar target/filmlinkd.jar`
 
 Let's get dangerous....
-`pack build filmlinkd-java-app --builder=gcr.io/buildpacks/builder:google-22 --env GOOGLE_RUNTIME_VERSION=17`
+`pack build filmlinkd-java-app --builder=gcr.io/buildpacks/builder:google-22`
 
-Unfortnatly that doesn't work because it doesn't have the credentials it needs to actually run anything on GCP but the fact that it complains about not having credentials seems promising.
+Unfortunatly that doesn't work because it doesn't have the credentials it needs to actually run anything on GCP but the fact that it complains about not having credentials seems promising.
+
+Well, I let Cloud Build run (see the cloudbuild.yaml) and it seems to be fine with the container it created. I deployed it to GCE and it seemed to be fine but not do anything and not give any interesting logs.
