@@ -56,4 +56,4 @@ Unfortunatly that doesn't work because it doesn't have the credentials it needs 
 Well, I let Cloud Build run (see the cloudbuild.yaml) and it seems to be fine with the container it created. I deployed it to GCE and it seemed to be fine but not do anything and not give any interesting logs.
 
 IT'S WORKING NOW!
-I think the GOOGLE_ENTRYPOINT was the key that I needed. I'm gonna try it without and see what happens.
+I don't think I fundamentally changed anything. So.... whatever Hurray! Maybe a GCE config. Probably.

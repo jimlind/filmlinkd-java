@@ -3,11 +3,15 @@ package jimlind.filmlinkd;
 import java.net.URL;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 
 public class Config {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String BOT_TOKEN_NAME = "discordBotToken";
 
     private static Properties publicProperties = new Properties();
@@ -19,14 +23,14 @@ public class Config {
         try {
             publicProperties.load(environmentUrl.openStream());
         } catch (Exception e) {
-            System.out.printf("Error Loading Properties: %s\n", e);
+            logger.error("Error Loading Properties", e);
             System.exit(1);
         }
 
         try {
             secretManagerServiceClient = SecretManagerServiceClient.create();
         } catch (Exception e) {
-            System.out.printf("Error Creating Secret Manager Service Client: %s\n", e);
+            logger.error("Error Creating Secret Manager Service Client", e);
             System.exit(1);
         }
 
