@@ -29,7 +29,7 @@ public class DiscordListeners extends ListenerAdapter {
                 logger.info(message);
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 5000);
+        timer.scheduleAtFixedRate(task, 0, 10000);
     }
 
 }
