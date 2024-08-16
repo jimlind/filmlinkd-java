@@ -10,7 +10,11 @@ Achievements of this project right now.
 - Buildpack Running Locally and and in Cloud Build
 - Docker Container Running in Google Compute Engine
 - Writing to Google Logs
+- Listen for PubSub messages
+- Post Something to Discord
 
 Next.
 
-- Listen for PubSub messages
+- Create subscription if it doesn't exist
+- Post the right message to the right channel
+- Solve sharding

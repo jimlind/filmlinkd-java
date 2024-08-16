@@ -2,17 +2,22 @@ package jimlind.filmlinkd;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.gson.GsonBuilder;
+import com.google.pubsub.v1.PubsubMessage;
 
+import jimlind.filmlinkd.models.Message;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class DiscordListeners extends ListenerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    private Queue queue;
+
+    public DiscordListeners(Queue localQueue) {
+        queue = localQueue;
+    }
 
     @Override
     public void onReady(ReadyEvent e) {
@@ -23,13 +28,20 @@ public class DiscordListeners extends ListenerAdapter {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
-                UUID uuid = UUID.randomUUID();
-                String message = "hello okay: " + uuid;
-                jda.getTextChannelById(channelId).sendMessage(message).queue();
-                logger.info(message);
+                // Try to grab something off the queue
+                String data;
+                try {
+                    PubsubMessage result = queue.get();
+                    data = result.getData().toStringUtf8();
+                } catch (Exception e) {
+                    return;
+                }
+
+                Message message = new GsonBuilder().create().fromJson(data, Message.class);
+                jda.getTextChannelById(channelId).sendMessage(message.entry.link).queue();
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 10000);
+        timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
 }
