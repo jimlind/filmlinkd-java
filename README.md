@@ -12,6 +12,7 @@ Achievements of this project right now.
 - Writing to Google Logs
 - Listen for PubSub messages
 - Post Something to Discord
+- Setup Spring Boot for Dependency Injection
 
 Next.
 
