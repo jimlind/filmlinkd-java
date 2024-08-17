@@ -1,6 +1,6 @@
 package jimlind.filmlinkd;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -22,9 +22,9 @@ public class Config {
     private static SecretManagerServiceClient secretManagerServiceClient;
 
     static {
-        URL environmentUrl = ClassLoader.getSystemResource("environment.properties");
         try {
-            publicProperties.load(environmentUrl.openStream());
+            InputStream stream = Config.class.getClassLoader().getResourceAsStream("environment.properties");
+            publicProperties.load(stream);
         } catch (Exception e) {
             logger.error("Error Loading Properties", e);
             System.exit(1);

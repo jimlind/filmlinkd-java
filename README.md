@@ -13,6 +13,7 @@ Achievements of this project right now.
 - Listen for PubSub messages
 - Post Something to Discord
 - Setup Spring Boot for Dependency Injection
+- Setup production and dev variables
 
 Next.
 

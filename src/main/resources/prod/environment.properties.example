@@ -1,0 +1,4 @@
+googleCloudProjectId=this is the identifier of my GCP project
+discordApplicationId=this is the discord application id
+discordBotTokenSecretName=this is the name of secret (not the value) of my discord bot token
+discordBotTokenSecretVersion=this is the version of the secrect
