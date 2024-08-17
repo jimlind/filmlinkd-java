@@ -1,5 +1,8 @@
 package jimlind.filmlinkd;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
@@ -11,6 +14,7 @@ import com.google.pubsub.v1.ProjectTopicName;
 import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.Subscription;
 
+@Component
 public class PubSub {
     String projectId = "letterboxd-bot";
     String topicId = "filmlinkd-dev-log-entry-topic";
@@ -19,7 +23,21 @@ public class PubSub {
     Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
     ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
 
-    public PubSub(Config config, Queue queue) {
+    private Queue queue;
+
+    @Autowired
+    public void setQueue(Queue queue) {
+        this.queue = queue;
+    }
+
+    private Config config;
+
+    @Autowired
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public PubSub() {
         // Create the subscription
         try {
             SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create();
@@ -37,6 +55,7 @@ public class PubSub {
 
         // Instantiate an asynchronous message receiver.
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
+            System.out.print("$");
             queue.set(message);
             consumer.ack();
         };

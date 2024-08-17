@@ -5,11 +5,13 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 
+@Component
 public class Config {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String BOT_TOKEN_NAME = "discordBotToken";

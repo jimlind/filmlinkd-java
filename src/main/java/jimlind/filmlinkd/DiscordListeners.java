@@ -3,6 +3,9 @@ package jimlind.filmlinkd;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
 
@@ -11,12 +14,14 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+@Component
 public class DiscordListeners extends ListenerAdapter {
 
     private Queue queue;
 
-    public DiscordListeners(Queue localQueue) {
-        queue = localQueue;
+    @Autowired
+    public void setQueue(Queue queue) {
+        this.queue = queue;
     }
 
     @Override

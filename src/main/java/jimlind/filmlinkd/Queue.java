@@ -2,8 +2,11 @@ package jimlind.filmlinkd;
 
 import java.util.ArrayList;
 
+import org.springframework.stereotype.Component;
+
 import com.google.pubsub.v1.PubsubMessage;
 
+@Component
 public class Queue {
     ArrayList<PubsubMessage> messageList = new ArrayList<PubsubMessage>();
 
