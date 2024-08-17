@@ -1,4 +1,4 @@
-package jimlind.filmlinkd;
+package jimlind.filmlinkd.listeners;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
 
+import jimlind.filmlinkd.Queue;
 import jimlind.filmlinkd.models.Message;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
