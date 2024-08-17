@@ -16,7 +16,6 @@ import com.google.pubsub.v1.Subscription;
 
 @Component
 public class PubSub {
-    String projectId = "letterboxd-bot";
     String topicId = "filmlinkd-dev-log-entry-topic";
     String subscriptionId = "filmlinkd-dev-log-entry-subscription-java";
     Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
@@ -37,7 +36,9 @@ public class PubSub {
         this.config = config;
     }
 
-    public PubSub() {
+    public void run() {
+        String projectId = this.config.getGoogleProjectId();
+
         // Create the subscription
         try {
             SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create();

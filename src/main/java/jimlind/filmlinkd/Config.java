@@ -14,7 +14,8 @@ import com.google.cloud.secretmanager.v1.SecretVersionName;
 @Component
 public class Config {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    private static final String BOT_TOKEN_NAME = "discordBotToken";
+    private static final String GCP_PROJECT_ID_NAME = "googleCloudProjectId";
+    private static final String DISCORD_BOT_TOKEN_NAME = "discordBotToken";
 
     private static Properties publicProperties = new Properties();
     private static Properties secretProperties = new Properties();
@@ -36,17 +37,21 @@ public class Config {
             System.exit(1);
         }
 
-        secretProperties.setProperty(BOT_TOKEN_NAME,
+        secretProperties.setProperty(DISCORD_BOT_TOKEN_NAME,
                 getSecret(publicProperties.getProperty("discordBotTokenSecretName"),
                         publicProperties.getProperty("discordBotTokenSecretVersion")));
     }
 
-    public String getBotToken() {
-        return secretProperties.getProperty(BOT_TOKEN_NAME);
+    public String getGoogleProjectId() {
+        return publicProperties.getProperty(GCP_PROJECT_ID_NAME);
+    }
+
+    public String getDiscordBotToken() {
+        return secretProperties.getProperty(DISCORD_BOT_TOKEN_NAME);
     }
 
     private static String getSecret(String secretName, String secretVersion) {
-        String project = publicProperties.getProperty("googleCloudProjectId");
+        String project = publicProperties.getProperty(GCP_PROJECT_ID_NAME);
         SecretVersionName secretVersionName = SecretVersionName.of(project, secretName, secretVersion);
 
         AccessSecretVersionResponse secretResponse = secretManagerServiceClient.accessSecretVersion(secretVersionName);
