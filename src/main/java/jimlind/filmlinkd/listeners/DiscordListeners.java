@@ -21,7 +21,7 @@ public class DiscordListeners extends ListenerAdapter {
     private Queue queue;
 
     @Autowired
-    public void setQueue(Queue queue) {
+    public DiscordListeners(Queue queue) {
         this.queue = queue;
     }
 

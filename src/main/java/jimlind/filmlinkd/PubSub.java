@@ -22,18 +22,13 @@ public class PubSub {
     Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
     ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
 
-    private Queue queue;
+    private final Config config;
+    private final Queue queue;
 
     @Autowired
-    public void setQueue(Queue queue) {
-        this.queue = queue;
-    }
-
-    private Config config;
-
-    @Autowired
-    public void setConfig(Config config) {
+    public PubSub(Config config, Queue queue) {
         this.config = config;
+        this.queue = queue;
     }
 
     public void run() {
@@ -57,7 +52,7 @@ public class PubSub {
         // Instantiate an asynchronous message receiver.
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
             System.out.print("$");
-            queue.set(message);
+            this.queue.set(message);
             consumer.ack();
         };
 
