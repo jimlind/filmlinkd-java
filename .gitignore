@@ -17,5 +17,3 @@ buildNumber.properties
 .classpath
 .gcp-key.json
 .DS_Store
-src/main/resources/dev/environment.properties
-src/main/resources/prod/environment.properties
