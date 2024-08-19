@@ -22,8 +22,16 @@ public class Config {
     private static SecretManagerServiceClient secretManagerServiceClient;
 
     static {
+        String environment = System.getenv("FILMLINKD_ENVIRONMENT");
+
         try {
-            InputStream stream = Config.class.getClassLoader().getResourceAsStream("environment.properties");
+            String resourcesDir = environment.equals("PRODUCTION") ? "prod/" : "dev/";
+            InputStream stream = Config.class.getClassLoader()
+                    .getResourceAsStream(resourcesDir + "environment.properties");
+
+            // TODO: DELETE THIS AFTER IT WORKS
+            logger.info("!! LOADING DATA FROM: " + resourcesDir + "environment.properties");
+
             publicProperties.load(stream);
         } catch (Exception e) {
             logger.error("Error Loading Properties", e);
