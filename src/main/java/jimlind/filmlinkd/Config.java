@@ -29,9 +29,6 @@ public class Config {
             InputStream stream = Config.class.getClassLoader()
                     .getResourceAsStream(resourcesDir + "environment.properties");
 
-            // TODO: DELETE THIS AFTER IT WORKS
-            logger.info("!! LOADING DATA FROM: " + resourcesDir + "environment.properties");
-
             publicProperties.load(stream);
         } catch (Exception e) {
             logger.error("Error Loading Properties", e);
