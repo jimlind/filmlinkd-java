@@ -15,10 +15,10 @@ Achievements of this project right now.
 - Setup Spring Boot for Dependency Injection
 - Setup production and development configs
 - Rework production and development environments
+- Don't use the env flags during cloudbuild
 
 Next.
 
-- How to use the env flags during cloudbuild
 - Create subscription if it doesn't exist
 - Post the right message to the right channel
 - Solve sharding
