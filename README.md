@@ -14,6 +14,7 @@ Achievements of this project right now.
 - Post Something to Discord
 - Setup Spring Boot for Dependency Injection
 - Setup production and development configs
+- Rework production and development environments
 
 Next.
 

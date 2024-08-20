@@ -58,7 +58,6 @@ Well, I let Cloud Build run (see the cloudbuild.yaml) and it seems to be fine wi
 IT'S WORKING NOW!
 I don't think I fundamentally changed anything. So.... whatever Hurray! Maybe a GCE config. Probably.
 
-To build the production version of the jar use
-`mvn -Denv=production package`
-Build and run the application with production data locally
-`mvn -Denv=production package && java -jar target/filmlinkd.jar`
+To swith to the production version from the CLI
+`export FILMLINKD_ENVIRONMENT="PRODUCTION"`
+or put the equivalent in the container runner
