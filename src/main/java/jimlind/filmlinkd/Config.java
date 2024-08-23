@@ -23,6 +23,7 @@ public class Config {
 
     static {
         String environment = System.getenv("FILMLINKD_ENVIRONMENT");
+        environment = environment != null ? environment : "";
 
         try {
             String resourcesDir = environment.equals("PRODUCTION") ? "prod/" : "dev/";
