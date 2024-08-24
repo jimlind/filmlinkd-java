@@ -18,10 +18,11 @@ Achievements of this project right now.
 - Don't use the env flags during cloudbuild
 - Solve sharding
 - Post the right message to the right channel
+- Create subscription if it doesn't exist
+- Don't blow up if subscription already exists
 
 Next.
 
-- Create subscription if it doesn't exist
-- Don't blow up if subscription already exists
+- Rename subscription based on discord shard
 - Shutdown pubsub on exit
-- Build a proper message
+- Build a proper Discord Embed Message

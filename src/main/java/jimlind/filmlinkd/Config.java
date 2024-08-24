@@ -16,6 +16,8 @@ public class Config {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String GCP_PROJECT_ID_NAME = "googleCloudProjectId";
     private static final String DISCORD_BOT_TOKEN_NAME = "discordBotToken";
+    private static final String PUBSUB_LOG_ENTRY_TOPIC_NAME = "logEntryTopicName";
+    private static final String PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME = "logEntrySubscriptionName";
 
     private static Properties publicProperties = new Properties();
     private static Properties secretProperties = new Properties();
@@ -54,6 +56,14 @@ public class Config {
 
     public String getDiscordBotToken() {
         return secretProperties.getProperty(DISCORD_BOT_TOKEN_NAME);
+    }
+
+    public String getPubSubLogEntryTopicName() {
+        return publicProperties.getProperty(PUBSUB_LOG_ENTRY_TOPIC_NAME);
+    }
+
+    public String getPubSubLogEntrySubscriptionName() {
+        return publicProperties.getProperty(PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME);
     }
 
     private static String getSecret(String secretName, String secretVersion) {

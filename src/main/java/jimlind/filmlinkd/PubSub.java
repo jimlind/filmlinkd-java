@@ -1,27 +1,29 @@
 package jimlind.filmlinkd;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.api.gax.rpc.NotFoundException;
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.protobuf.Duration;
 import com.google.pubsub.v1.ExpirationPolicy;
-import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.ProjectTopicName;
 import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.Subscription.Builder;
+import com.google.pubsub.v1.SubscriptionName;
+import com.google.pubsub.v1.TopicName;
 
 @Component
 public class PubSub {
     private static final Logger logger = LoggerFactory.getLogger(PubSub.class);
 
-    String topicId = "filmlinkd-dev-log-entry-topic";
-    String subscriptionId = "filmlinkd-dev-log-entry-subscription-java";
     Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
     Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
     ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
@@ -37,31 +39,40 @@ public class PubSub {
 
     public void run() {
         String projectId = this.config.getGoogleProjectId();
+        String pubSubTopic = this.config.getPubSubLogEntryTopicName();
+        String pubSubSubscription = this.config.getPubSubLogEntrySubscriptionName();
 
-        // Create the subscription
+        TopicName topicName = TopicName.of(projectId, pubSubTopic);
+        SubscriptionName subscriptionName = SubscriptionName.of(projectId, pubSubSubscription);
+        SubscriptionAdminClient subscriptionAdminClient;
+
         try {
-            SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create();
-            ProjectTopicName topicName = ProjectTopicName.of(projectId, topicId);
-            ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId);
-            subscriptionAdminClient.createSubscription(
-                    Subscription.newBuilder().setName(subscriptionName.toString()).setTopic(topicName.toString())
-                            .setAckDeadlineSeconds(10).setMessageRetentionDuration(retentionDuration)
-                            .setExpirationPolicy(expirationPolicy).build());
-        } catch (Exception e) {
-            logger.error("Unable to create the subscription", e);
+            subscriptionAdminClient = SubscriptionAdminClient.create();
+        } catch (IOException e) {
+            logger.error("Unable to setup connection to the PubSub client", e);
+            return;
         }
 
-        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId);
+        try {
+            subscriptionAdminClient.getSubscription(subscriptionName);
+        } catch (NotFoundException e) {
+            Builder builder = Subscription.newBuilder().setName(subscriptionName.toString())
+                    .setTopic(topicName.toString()).setAckDeadlineSeconds(10)
+                    .setMessageRetentionDuration(retentionDuration).setExpirationPolicy(expirationPolicy);
+            subscriptionAdminClient.createSubscription(builder.build());
+        }
 
-        // Instantiate an asynchronous message receiver.
+        // Setup an asynchronous message receiver
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
             this.queue.set(message);
             consumer.ack();
         };
 
-        Subscriber subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
-        // Start the subscriber.
+        // Wire the reciever to the subscription
+        Subscriber subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
         subscriber.startAsync().awaitRunning();
         logger.info("Listening for messages on " + subscriptionName.toString());
+
+        return;
     }
 }
