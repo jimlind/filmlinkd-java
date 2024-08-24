@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import com.google.pubsub.v1.PubsubMessage;
 
 @Component
+// Qeue exists so that I can rate limit the amount of processing that happens.
+// If we let every PubSub event trigger some logic it can take over the
+// CPU really quickly.
 public class Queue {
     ArrayList<PubsubMessage> messageList = new ArrayList<PubsubMessage>();
 

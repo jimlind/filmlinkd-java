@@ -63,6 +63,9 @@ public class PubSub {
         }
 
         // Setup an asynchronous message receiver
+        // This writes to a queue so that I can rate limit the amount of processing that
+        // happens. If we let every PubSub event trigger some logic it can take over the
+        // CPU really quickly.
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
             this.queue.set(message);
             consumer.ack();
