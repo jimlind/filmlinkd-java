@@ -18,6 +18,7 @@ import jimlind.filmlinkd.models.Message;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 @Component
 public class DiscordListeners extends ListenerAdapter {
@@ -35,13 +36,26 @@ public class DiscordListeners extends ListenerAdapter {
     public void onReady(ReadyEvent e) {
         JDA jda = e.getJDA();
 
+        ShardManager manager = jda.getShardManager();
+        // There is surely a cleaner way to do this in a filter or something but
+        // whatever. This works well enough.
+        Boolean allShardsRunnings = true;
+        for (var entry : manager.getStatuses().entrySet()) {
+            if (entry.getValue() == JDA.Status.LOGGING_IN) {
+                allShardsRunnings = false;
+            }
+        }
+        queue.returnResults = allShardsRunnings;
+
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             // Fix this later plase....
             // Probably need to do the thing where I pass the scope to this method properly.
             // I don't like not being able to use "this.queue" or "this.messageUtility"
             public void run() {
-                // Try to grab something off the queue
+                // Try to grab something off the queue, it is expected that it will throw an
+                // exception if there isn't anything available or if all the shards aren't
+                // loaded.
                 String data;
                 try {
                     PubsubMessage result = queue.get();
