@@ -16,9 +16,12 @@ Achievements of this project right now.
 - Setup production and development configs
 - Rework production and development environments
 - Don't use the env flags during cloudbuild
+- Solve sharding
+- Post the right message to the right channel
 
 Next.
 
 - Create subscription if it doesn't exist
-- Post the right message to the right channel
-- Solve sharding
+- Don't blow up if subscription already exists
+- Shutdown pubsub on exit
+- Build a proper message

@@ -37,13 +37,12 @@ public class FirestoreUtility {
 
     public ArrayList<String> getUserChannelList(String userLID) throws Exception {
         ArrayList<String> channelListResults = new ArrayList<String>();
-        System.out.println(userLID);
+        User user = new User();
 
         ApiFuture<QuerySnapshot> query = this.db.collection("users-dev").whereEqualTo("letterboxdId", userLID).get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         QueryDocumentSnapshot document = documents.get(0);
-        User user = new User();
 
         try {
             user = document.toObject(User.class);

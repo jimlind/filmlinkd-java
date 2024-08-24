@@ -1,5 +1,7 @@
 package jimlind.filmlinkd;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import com.google.pubsub.v1.Subscription;
 
 @Component
 public class PubSub {
+    private static final Logger logger = LoggerFactory.getLogger(PubSub.class);
+
     String topicId = "filmlinkd-dev-log-entry-topic";
     String subscriptionId = "filmlinkd-dev-log-entry-subscription-java";
     Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
@@ -44,14 +48,13 @@ public class PubSub {
                             .setAckDeadlineSeconds(10).setMessageRetentionDuration(retentionDuration)
                             .setExpirationPolicy(expirationPolicy).build());
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error("Unable to create the subscription", e);
         }
 
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId);
 
         // Instantiate an asynchronous message receiver.
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
-            System.out.print("$");
             this.queue.set(message);
             consumer.ack();
         };
@@ -59,7 +62,6 @@ public class PubSub {
         Subscriber subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
         // Start the subscriber.
         subscriber.startAsync().awaitRunning();
-        System.out.printf("Listening for messages on %s:\n",
-                subscriptionName.toString());
+        logger.info("Listening for messages on " + subscriptionName.toString());
     }
 }
