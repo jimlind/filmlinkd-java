@@ -16,6 +16,7 @@ import jimlind.filmlinkd.MessageUtility;
 import jimlind.filmlinkd.Queue;
 import jimlind.filmlinkd.models.Message;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -39,13 +40,15 @@ public class DiscordListeners extends ListenerAdapter {
         ShardManager manager = jda.getShardManager();
         // There is surely a cleaner way to do this in a filter or something but
         // whatever. This works well enough.
-        Boolean allShardsRunnings = true;
+        Boolean shardsLoggingIn = false;
         for (var entry : manager.getStatuses().entrySet()) {
             if (entry.getValue() == JDA.Status.LOGGING_IN) {
-                allShardsRunnings = false;
+                shardsLoggingIn = true;
+                break;
             }
         }
-        queue.returnResults = allShardsRunnings;
+        // When shards are logging in (true) the the write only lock stays on (true)
+        queue.writeOnlyLock = shardsLoggingIn;
 
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -58,7 +61,7 @@ public class DiscordListeners extends ListenerAdapter {
                 // loaded.
                 String data;
                 try {
-                    PubsubMessage result = queue.get();
+                    PubsubMessage result = queue.get(jda.getShardInfo().getShardId(), manager.getShardsTotal());
                     data = result.getData().toStringUtf8();
                 } catch (Exception e) {
                     return;
@@ -69,14 +72,20 @@ public class DiscordListeners extends ListenerAdapter {
 
                 for (String channelId : channelList) {
                     try {
-                        jda.getTextChannelById(channelId).sendMessage(message.entry.link).queue();
+                        TextChannel channel = jda.getTextChannelById(channelId);
+                        if (channel != null) {
+                            channel.sendMessage(message.entry.link).queue();
+                        }
                     } catch (Exception e) {
-                        logger.info(
-                                "Unable to write message for [" + message.entry.filmTitle + "] to [" + channelId + "]");
+                        String name = message.entry.userName;
+                        String film = message.entry.filmTitle;
+                        logger.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId);
+
                     }
                 }
             }
         };
+        // I can probably make this a lot shorter for actual use
         timer.scheduleAtFixedRate(task, 0, 1000);
     }
 

@@ -20,9 +20,9 @@ Achievements of this project right now.
 - Post the right message to the right channel
 - Create subscription if it doesn't exist
 - Don't blow up if subscription already exists
+- Reuse one subscription for all shards
 
 Next.
 
-- Rename subscription based on discord shard
 - Shutdown pubsub on exit
 - Build a proper Discord Embed Message
