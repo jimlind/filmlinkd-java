@@ -10,6 +10,9 @@ import com.google.pubsub.v1.PubsubMessage;
 // Qeue exists so that I can rate limit the amount of processing that happens.
 // If we let every PubSub event trigger some logic it can take over the
 // CPU really quickly.
+//
+// If there was some kind of throttled events in Spring I wouldn't need to do
+// this. I should go look that up and see if it does exist.
 public class Queue {
     public Boolean writeOnlyLock = true;
     public Boolean getMethodSingleUseLock = false;
