@@ -25,4 +25,5 @@ Achievements of this project right now.
 Next.
 
 - Shutdown pubsub on exit
+- Findout if there's an annotation for the logger that I can use
 - Build a proper Discord Embed Message

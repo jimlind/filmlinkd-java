@@ -78,4 +78,9 @@ public class PubSub {
 
         return;
     }
+
+    // TODO: Actually make this do something
+    public void stop() {
+        System.out.println("stop the insanity!");
+    }
 }
