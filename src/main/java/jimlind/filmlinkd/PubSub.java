@@ -75,7 +75,9 @@ public class PubSub {
     }
 
     public void stop() {
-        this.subscriber.stopAsync();
+        if (this.subscriber != null) {
+            this.subscriber.stopAsync();
+        }
         log.info("Stopped Listening for Messages on " + this.subscriber.getSubscriptionNameString());
     }
 }
