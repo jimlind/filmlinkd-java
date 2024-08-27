@@ -1,8 +1,7 @@
 package jimlind.filmlinkd.listeners;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import jimlind.filmlinkd.Config;
@@ -10,17 +9,32 @@ import jimlind.filmlinkd.PubSub;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 
 @Component
-class MyApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
+class ApplicationListener implements org.springframework.context.ApplicationListener<ApplicationReadyEvent> {
+
+  @Autowired
+  Config config;
+
+  @Autowired
+  DiscordListeners discordListeners;
+
+  @Autowired
+  PubSub pubSub;
+
+  @Autowired
+  ShutdownThread shutdownThread;
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
-    ConfigurableApplicationContext context = event.getApplicationContext();
+    // Register the shutdownThread to the shutdownHook
+    Runtime.getRuntime().addShutdownHook(this.shutdownThread);
 
-    Config config = context.getBean(Config.class);
-    DiscordListeners discordListeners = context.getBean(DiscordListeners.class);
-    DefaultShardManagerBuilder.createLight(config.getDiscordBotToken()).addEventListeners(discordListeners).build();
+    // Start the Discord App
+    // TODO: Remove the 4 total shards, that's just a good way for me to test it
+    // because it wires up different shards correctly.
+    DefaultShardManagerBuilder.createLight(this.config.getDiscordBotToken()).setShardsTotal(4)
+        .addEventListeners(this.discordListeners).build();
 
-    PubSub pubSub = context.getBean(PubSub.class);
-    pubSub.run();
+    // Start the PubSub listener
+    this.pubSub.start();
   }
 }

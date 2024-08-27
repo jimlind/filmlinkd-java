@@ -15,7 +15,7 @@ public class ShutdownThread extends Thread {
     PubSub pubSub;
 
     public void run() {
-        this.logger.info("Shutting down...");
+        this.logger.info("Shutting Things Down!");
         this.pubSub.stop();
     }
 }

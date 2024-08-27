@@ -24,20 +24,17 @@ import com.google.pubsub.v1.TopicName;
 public class PubSub {
     private static final Logger logger = LoggerFactory.getLogger(PubSub.class);
 
-    Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
-    Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
-    ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
-
-    private final Config config;
-    private final Queue queue;
-
     @Autowired
-    public PubSub(Config config, Queue queue) {
-        this.config = config;
-        this.queue = queue;
-    }
+    private Config config;
+    @Autowired
+    private Queue queue;
 
-    public void run() {
+    private Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
+    private Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
+    private ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
+    private Subscriber subscriber;
+
+    public void start() {
         String projectId = this.config.getGoogleProjectId();
         String pubSubTopic = this.config.getPubSubLogEntryTopicName();
         String pubSubSubscription = this.config.getPubSubLogEntrySubscriptionName();
@@ -72,15 +69,13 @@ public class PubSub {
         };
 
         // Wire the reciever to the subscription
-        Subscriber subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
-        subscriber.startAsync().awaitRunning();
-        logger.info("Listening for messages on " + subscriptionName.toString());
-
-        return;
+        this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
+        this.subscriber.startAsync().awaitRunning();
+        logger.info("Staring Listening for Messages on " + subscriptionName.toString());
     }
 
-    // TODO: Actually make this do something
     public void stop() {
-        System.out.println("stop the insanity!");
+        this.subscriber.stopAsync();
+        logger.info("Stopped Listening for Messages on " + this.subscriber.getSubscriptionNameString());
     }
 }

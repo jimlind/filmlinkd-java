@@ -21,9 +21,9 @@ Achievements of this project right now.
 - Create subscription if it doesn't exist
 - Don't blow up if subscription already exists
 - Reuse one subscription for all shards
+- Shutdown pubsub on exit
 
 Next.
 
-- Shutdown pubsub on exit
 - Findout if there's an annotation for the logger that I can use
 - Build a proper Discord Embed Message
