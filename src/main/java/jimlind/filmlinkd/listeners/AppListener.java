@@ -2,6 +2,7 @@ package jimlind.filmlinkd.listeners;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import jimlind.filmlinkd.Config;
@@ -9,7 +10,7 @@ import jimlind.filmlinkd.PubSub;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 
 @Component
-class ApplicationListener implements org.springframework.context.ApplicationListener<ApplicationReadyEvent> {
+class AppListener implements ApplicationListener<ApplicationReadyEvent> {
 
   @Autowired
   Config config;

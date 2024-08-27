@@ -73,7 +73,7 @@ public class DiscordListeners extends ListenerAdapter {
                     try {
                         TextChannel channel = jda.getTextChannelById(channelId);
                         if (channel != null) {
-                            channel.sendMessage(message.entry.link).queue();
+                            channel.sendMessageEmbeds(messageUtility.createEmbeds(message)).queue();
                         }
                     } catch (Exception e) {
                         String name = message.entry.userName;

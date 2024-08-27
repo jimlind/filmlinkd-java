@@ -28,3 +28,5 @@ Achievements of this project right now.
 Next.
 
 - Build a proper Discord Embed Message
+- Update database after embed written
+- Make sure thing restarts if it fails
