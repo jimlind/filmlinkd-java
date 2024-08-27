@@ -2,8 +2,6 @@ package jimlind.filmlinkd;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +18,11 @@ import com.google.pubsub.v1.Subscription.Builder;
 import com.google.pubsub.v1.SubscriptionName;
 import com.google.pubsub.v1.TopicName;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class PubSub {
-    private static final Logger logger = LoggerFactory.getLogger(PubSub.class);
 
     @Autowired
     private Config config;
@@ -46,7 +46,7 @@ public class PubSub {
         try {
             subscriptionAdminClient = SubscriptionAdminClient.create();
         } catch (IOException e) {
-            logger.error("Unable to setup connection to the PubSub client", e);
+            log.error("Unable to setup connection to the PubSub client", e);
             return;
         }
 
@@ -71,11 +71,11 @@ public class PubSub {
         // Wire the reciever to the subscription
         this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
         this.subscriber.startAsync().awaitRunning();
-        logger.info("Staring Listening for Messages on " + subscriptionName.toString());
+        log.info("Staring Listening for Messages on " + subscriptionName.toString());
     }
 
     public void stop() {
         this.subscriber.stopAsync();
-        logger.info("Stopped Listening for Messages on " + this.subscriber.getSubscriptionNameString());
+        log.info("Stopped Listening for Messages on " + this.subscriber.getSubscriptionNameString());
     }
 }

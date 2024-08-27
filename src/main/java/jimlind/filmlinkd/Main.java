@@ -1,16 +1,15 @@
 package jimlind.filmlinkd;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @SpringBootApplication
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     public static void main(String[] args) {
-        logger.info("Starting Things Up!");
+        log.info("Starting Things Up!");
         SpringApplication.run(Main.class, args);
     }
 }

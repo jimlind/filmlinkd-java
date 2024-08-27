@@ -3,17 +3,17 @@ package jimlind.filmlinkd;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class Config {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String GCP_PROJECT_ID_NAME = "googleCloudProjectId";
     private static final String DISCORD_BOT_TOKEN_NAME = "discordBotToken";
     private static final String PUBSUB_LOG_ENTRY_TOPIC_NAME = "logEntryTopicName";
@@ -34,14 +34,14 @@ public class Config {
 
             publicProperties.load(stream);
         } catch (Exception e) {
-            logger.error("Error Loading Properties", e);
+            log.error("Error Loading Properties", e);
             System.exit(1);
         }
 
         try {
             secretManagerServiceClient = SecretManagerServiceClient.create();
         } catch (Exception e) {
-            logger.error("Error Creating Secret Manager Service Client", e);
+            log.error("Error Creating Secret Manager Service Client", e);
             System.exit(1);
         }
 

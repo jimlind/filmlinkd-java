@@ -3,8 +3,6 @@ package jimlind.filmlinkd;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +15,11 @@ import com.google.cloud.firestore.QuerySnapshot;
 
 import jimlind.filmlinkd.models.User;
 import jimlind.filmlinkd.models.User.Channel;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class FirestoreUtility {
-    private static final Logger logger = LoggerFactory.getLogger(FirestoreUtility.class);
 
     private final Config config;
     private final Firestore db;
@@ -47,7 +46,7 @@ public class FirestoreUtility {
         try {
             user = document.toObject(User.class);
         } catch (Exception e) {
-            logger.error("Unable to Cast User via LetterboxdID [" + userLID + "]");
+            log.error("Unable to Cast User via LetterboxdID [" + userLID + "]");
             return channelListResults;
         }
 

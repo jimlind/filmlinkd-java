@@ -2,16 +2,15 @@ package jimlind.filmlinkd;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jimlind.filmlinkd.models.Message;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class MessageUtility {
-    private static final Logger logger = LoggerFactory.getLogger(PubSub.class);
     private final FirestoreUtility firestoreUtility;
 
     @Autowired
@@ -29,7 +28,7 @@ public class MessageUtility {
         try {
             return this.firestoreUtility.getUserChannelList(message.entry.userLid);
         } catch (Exception e) {
-            logger.info("Unable to fetch channel list from user", e);
+            log.info("Unable to fetch channel list from user", e);
         }
 
         return channelList;

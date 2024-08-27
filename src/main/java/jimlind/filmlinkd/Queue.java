@@ -13,6 +13,7 @@ import com.google.pubsub.v1.PubsubMessage;
 public class Queue {
     public Boolean writeOnlyLock = true;
     public Boolean getMethodSingleUseLock = false;
+
     private ArrayList<PubsubMessage> messageList = new ArrayList<PubsubMessage>();
     private ArrayList<Integer> fetchIdList = new ArrayList<Integer>();
 

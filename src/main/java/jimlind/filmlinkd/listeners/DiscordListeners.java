@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +13,7 @@ import com.google.pubsub.v1.PubsubMessage;
 import jimlind.filmlinkd.MessageUtility;
 import jimlind.filmlinkd.Queue;
 import jimlind.filmlinkd.models.Message;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -22,8 +21,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 @Component
+@Slf4j
 public class DiscordListeners extends ListenerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(DiscordListeners.class);
     private MessageUtility messageUtility;
     private Queue queue;
 
@@ -79,7 +78,7 @@ public class DiscordListeners extends ListenerAdapter {
                     } catch (Exception e) {
                         String name = message.entry.userName;
                         String film = message.entry.filmTitle;
-                        logger.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId);
+                        log.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId);
 
                     }
                 }
