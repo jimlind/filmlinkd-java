@@ -18,6 +18,7 @@ public class Config {
     private static final String DISCORD_BOT_TOKEN_NAME = "discordBotToken";
     private static final String PUBSUB_LOG_ENTRY_TOPIC_NAME = "logEntryTopicName";
     private static final String PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME = "logEntrySubscriptionName";
+    private static final String FIRESTORE_COLLECTION_ID = "firesStoreCollectionId";
 
     private static Properties publicProperties = new Properties();
     private static Properties secretProperties = new Properties();
@@ -65,6 +66,8 @@ public class Config {
     public String getPubSubLogEntrySubscriptionName() {
         return publicProperties.getProperty(PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME);
     }
+
+    public String getFirestoreCollectionId() {return publicProperties.getProperty(FIRESTORE_COLLECTION_ID);
 
     private static String getSecret(String secretName, String secretVersion) {
         String project = publicProperties.getProperty(GCP_PROJECT_ID_NAME);
