@@ -34,11 +34,11 @@ public class FirestoreUtility {
         this.db = firestoreOptions.getService();
     }
 
-    public ArrayList<String> getUserChannelList(String userLID) throws Exception {
-        ArrayList<String> channelListResults = new ArrayList<String>();
+    public User getUser(String userLID) throws Exception {
         User user = new User();
+        String collectionId = this.config.getFirestoreCollectionId();
 
-        ApiFuture<QuerySnapshot> query = this.db.collection("users-dev").whereEqualTo("letterboxdId", userLID).get();
+        ApiFuture<QuerySnapshot> query = this.db.collection(collectionId).whereEqualTo("letterboxdId", userLID).get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         QueryDocumentSnapshot document = documents.get(0);
@@ -47,6 +47,16 @@ public class FirestoreUtility {
             user = document.toObject(User.class);
         } catch (Exception e) {
             log.error("Unable to Cast User via LetterboxdID [" + userLID + "]");
+            return null;
+        }
+
+        return user;
+    }
+
+    public ArrayList<String> getUserChannelList(String userLID) throws Exception {
+        ArrayList<String> channelListResults = new ArrayList<String>();
+        User user = this.getUser(userLID);
+        if (user == null) {
             return channelListResults;
         }
 

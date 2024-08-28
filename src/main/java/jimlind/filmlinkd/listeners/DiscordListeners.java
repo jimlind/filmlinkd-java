@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import jimlind.filmlinkd.FirestoreUtility;
+import jimlind.filmlinkd.MessageUtility;
+import jimlind.filmlinkd.Queue;
+import jimlind.filmlinkd.models.Message;
+import jimlind.filmlinkd.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
 
-import jimlind.filmlinkd.MessageUtility;
-import jimlind.filmlinkd.Queue;
-import jimlind.filmlinkd.models.Message;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -23,14 +25,12 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 @Component
 @Slf4j
 public class DiscordListeners extends ListenerAdapter {
-    private MessageUtility messageUtility;
-    private Queue queue;
-
     @Autowired
-    public DiscordListeners(MessageUtility messageUtility, Queue queue) {
-        this.messageUtility = messageUtility;
-        this.queue = queue;
-    }
+    private FirestoreUtility firestoreUtility;
+    @Autowired
+    private MessageUtility messageUtility;
+    @Autowired
+    private Queue queue;
 
     @Override
     public void onReady(ReadyEvent e) {
@@ -67,19 +67,26 @@ public class DiscordListeners extends ListenerAdapter {
                 }
 
                 Message message = new GsonBuilder().create().fromJson(data, Message.class);
+                User user = null;
+                try {
+                    user = firestoreUtility.getUser(message.entry.userLid);
+                } catch (Exception ex) {
+                    log.warn("Invalid user [{}] passed in PubSub message", message.entry.userLid);
+                }
                 ArrayList<String> channelList = messageUtility.getChannelList(message);
 
                 for (String channelId : channelList) {
                     try {
                         TextChannel channel = jda.getTextChannelById(channelId);
-                        if (channel != null) {
-                            channel.sendMessageEmbeds(messageUtility.createEmbeds(message)).queue();
+                        if (channel != null && user != null) {
+                            channel.sendMessageEmbeds(messageUtility.createEmbeds(message, user)).queue();
                         }
                     } catch (Exception e) {
                         String name = message.entry.userName;
                         String film = message.entry.filmTitle;
-                        log.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId);
-
+                        log.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId, e);
+                        log.info("Message write failure", e);
+                        log.error("e: ", e);
                     }
                 }
             }
