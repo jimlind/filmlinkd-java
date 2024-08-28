@@ -67,7 +67,7 @@ public class Config {
         return publicProperties.getProperty(PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME);
     }
 
-    public String getFirestoreCollectionId() {return publicProperties.getProperty(FIRESTORE_COLLECTION_ID);
+    public String getFirestoreCollectionId() { return publicProperties.getProperty(FIRESTORE_COLLECTION_ID); }
 
     private static String getSecret(String secretName, String secretVersion) {
         String project = publicProperties.getProperty(GCP_PROJECT_ID_NAME);
