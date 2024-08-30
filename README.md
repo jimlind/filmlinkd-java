@@ -24,9 +24,11 @@ Achievements of this project right now.
 - Shutdown pubsub on exit
 - Use annotation for logger
 - Disconnect discord on exit.
+- Build a proper Discord Embed Message
 
 Next.
 
-- Build a proper Discord Embed Message
+- Can I have multiple servers connected?
 - Update database after embed written
 - Make sure thing restarts if it fails
+- Fully test and refine embed message
