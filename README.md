@@ -25,10 +25,12 @@ Achievements of this project right now.
 - Use annotation for logger
 - Disconnect discord on exit.
 - Build a proper Discord Embed Message
+- Confirmed that Discord API doesn't seem to care about number of clients
+- Use LinkedList in Queue like you should for a queue
 
 Next.
 
-- Can I have multiple servers connected?
+- Single Channel Messages Don't Seem to Work
 - Update database after embed written
 - Make sure thing restarts if it fails
 - Fully test and refine embed message

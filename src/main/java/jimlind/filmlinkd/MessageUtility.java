@@ -24,6 +24,7 @@ public class MessageUtility {
 
     public ArrayList<String> getChannelList(Message message) {
         ArrayList<String> channelList = new ArrayList<String>();
+        // TODO: Check this out... not sure if it is working as expected
         if (!message.channelId.isBlank()) {
             channelList.add(message.channelId);
             return channelList;

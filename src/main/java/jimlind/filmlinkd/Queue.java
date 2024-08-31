@@ -51,7 +51,7 @@ public class Queue {
             messageList.removeFirst();
             this.fetchIdList.clear();
         }
-        
+
         return message;
     }
 }
