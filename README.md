@@ -27,10 +27,10 @@ Achievements of this project right now.
 - Build a proper Discord Embed Message
 - Confirmed that Discord API doesn't seem to care about number of clients
 - Use LinkedList in Queue like you should for a queue
+- Single Channel Messages Don't Seem to Work
 
 Next.
 
-- Single Channel Messages Don't Seem to Work
 - Update database after embed written
 - Make sure thing restarts if it fails
 - Fully test and refine embed message

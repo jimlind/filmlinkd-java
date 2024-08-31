@@ -17,7 +17,7 @@ import com.google.pubsub.v1.PubsubMessage;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -77,7 +77,7 @@ public class DiscordListeners extends ListenerAdapter {
 
                 for (String channelId : channelList) {
                     try {
-                        TextChannel channel = jda.getTextChannelById(channelId);
+                        GuildMessageChannel channel = jda.getChannelById(GuildMessageChannel.class, channelId);
                         if (channel != null && user != null) {
                             channel.sendMessageEmbeds(messageUtility.createEmbeds(message, user)).queue();
                         }
