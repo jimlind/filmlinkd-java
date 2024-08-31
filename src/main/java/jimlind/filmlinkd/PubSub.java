@@ -68,7 +68,7 @@ public class PubSub {
             consumer.ack();
         };
 
-        // Wire the reciever to the subscription
+        // Wire the receiver to the subscription
         this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
         this.subscriber.startAsync().awaitRunning();
         log.info("Staring Listening for Messages on " + subscriptionName.toString());
