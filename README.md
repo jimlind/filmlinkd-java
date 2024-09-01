@@ -28,9 +28,18 @@ Achievements of this project right now.
 - Confirmed that Discord API doesn't seem to care about number of clients
 - Use LinkedList in Queue like you should for a queue
 - Single Channel Messages Don't Seem to Work
+- Different printed date if old enough
+- Checked: No Watched Date, No Release Year (Best Served Cold),
 
 Next.
 
 - Update database after embed written
 - Make sure thing restarts if it fails
 - Fully test and refine embed message
+- - If entry.type is empty/blank (maybe leftover from RSS)
+- - Usernames that begin and end with underscores
+
+
+Open Larger Bugs.
+Users __star__ and __zero__ blow up Node.js with Resource id "__zero__" is invalid because it is reserved. that seems to
+be coming from Firestore

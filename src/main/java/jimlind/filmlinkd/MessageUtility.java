@@ -1,8 +1,12 @@
 package jimlind.filmlinkd;
 
 import java.awt.Color;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import jimlind.filmlinkd.models.Message;
 import jimlind.filmlinkd.models.User;
@@ -48,21 +52,26 @@ public class MessageUtility {
         embedBuilder.setAuthor(authorTitle, profileURL, user.image);
 
         String adult = message.entry.adult ? ":underage: " : "";
-        String year = message.entry.filmYear != null ? "(" + message.entry.filmYear + ")" : "";
+        String year = message.entry.filmYear != 0 ? "(" + message.entry.filmYear + ")" : "";
         embedBuilder.setTitle(adult + message.entry.filmTitle + " " + year, message.entry.link);
 
         // Build the Review Title
-        String reviewTitle = new SimpleDateFormat("**MMM dd**").format(message.entry.watchedDate);
+        String reviewTitle = "";
+        if (message.entry.watchedDate != null) {
+            String pattern = Instant.now().toEpochMilli() - message.entry.watchedDate < 5000000000L ? "**MMM dd**" : "**MMM dd uuu**";
+            reviewTitle = LocalDateTime.ofEpochSecond(message.entry.watchedDate/1000, 0, ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
+        }
+
         if (message.entry.starCount > 0){
             // Whole stars
             reviewTitle += "<:s:851134022251970610>".repeat((int) Math.floor(message.entry.starCount));
             // Half star if necessary
             reviewTitle += (message.entry.starCount % 1 > 0) ? "<:h:851199023854649374>" : "";
         }
-        if (message.entry.rewatch) {
+        if (message.entry.rewatch != null && message.entry.rewatch) {
             reviewTitle += " <:r:851135667546488903>";
         }
-        if (message.entry.liked) {
+        if (message.entry.liked != null && message.entry.liked) {
             reviewTitle += " <:l:851138401557676073>";
         }
         reviewTitle = !reviewTitle.isEmpty() ? reviewTitle + "\u200b\n" : "";
