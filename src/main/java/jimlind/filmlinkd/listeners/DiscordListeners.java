@@ -51,7 +51,7 @@ public class DiscordListeners extends ListenerAdapter {
 
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
-            // Fix this later plase....
+            // Fix this later please....
             // Probably need to do the thing where I pass the scope to this method properly.
             // I don't like not being able to use "this.queue" or "this.messageUtility"
             public void run() {
