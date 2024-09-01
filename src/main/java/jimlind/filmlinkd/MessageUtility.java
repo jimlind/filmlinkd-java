@@ -46,8 +46,7 @@ public class MessageUtility {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         String profileName = user.displayName;
-        String action = !message.entry.type.isEmpty() ? message.entry.type : "logg";
-        String authorTitle = "%s %sed...".formatted(profileName, action);
+        String authorTitle = "%s %sed...".formatted(profileName, message.entry.type);
         String profileURL = "https://letterboxd.com/%s/".formatted(user.userName);
         embedBuilder.setAuthor(authorTitle, profileURL, user.image);
 

@@ -35,9 +35,6 @@ Next.
 
 - Update database after embed written
 - Make sure thing restarts if it fails
-- Fully test and refine embed message
-- - If entry.type is empty/blank (maybe leftover from RSS)
-- - Usernames that begin and end with underscores
 
 
 Open Larger Bugs.
