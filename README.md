@@ -29,7 +29,8 @@ Achievements of this project right now.
 - Use LinkedList in Queue like you should for a queue
 - Single Channel Messages Don't Seem to Work
 - Different printed date if old enough
-- Checked: No Watched Date, No Release Year (Best Served Cold), Usernames with underscores
+- Checked: No Watched Date, No Release Year (Best Served Cold), Usernames with underscores (\_star\_)
+- Fixed Haiku Dan formatting
 
 Next.
 
