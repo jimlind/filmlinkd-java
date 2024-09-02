@@ -24,6 +24,8 @@ public class Queue {
         messageList.add(message);
     }
 
+    // This should be fixed probably to return a null instead of an exception that needs to get caught since the early
+    // exits are business as usual, but I wasn't thinking about that PubsubMessage|null as acceptable return types
     public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal) throws Exception {
         // Check if the specific ID was used for fetching and set it otherwise
         if (this.fetchIdList.contains(fetchClientId)) {
