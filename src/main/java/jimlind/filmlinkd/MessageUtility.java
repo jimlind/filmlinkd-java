@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import io.github.furstenheim.Options;
+import io.github.furstenheim.OptionsBuilder;
 import jimlind.filmlinkd.models.Message;
 import jimlind.filmlinkd.models.User;
 import org.jsoup.Jsoup;
@@ -81,7 +83,8 @@ public class MessageUtility {
             reviewText = reviewText.substring(0, 400).trim();
         }
         Document reviewDocument = Jsoup.parseBodyFragment(reviewText);
-        reviewText = new CopyDown().convert(reviewDocument.body().toString());
+        Options options = OptionsBuilder.anOptions().withBr("\n").build();
+        reviewText = new CopyDown(options).convert(reviewDocument.body().toString());
         if (message.entry.review.length() > 400) {
             reviewText += "...";
         }
