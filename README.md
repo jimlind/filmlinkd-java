@@ -31,11 +31,11 @@ Achievements of this project right now.
 - Different printed date if old enough
 - Checked: No Watched Date, No Release Year (Best Served Cold), Usernames with underscores (\_star\_)
 - Fixed Haiku Dan formatting
+- Make sure thing restarts if it fails
 
 Next.
 
 - Update database after embed written
-- Make sure thing restarts if it fails
 
 
 Open Larger Bugs.
