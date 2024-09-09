@@ -1,7 +1,7 @@
 package jimlind.filmlinkd.listeners;
 
-import jimlind.filmlinkd.systems.google.GooglePubSubManager;
-import jimlind.filmlinkd.systems.discord.DiscordProcessManager;
+import jimlind.filmlinkd.systems.google.PubSubManager;
+import jimlind.filmlinkd.systems.discord.ProcessManager;
 import jimlind.filmlinkd.threads.ShutdownThread;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 class AppListener implements ApplicationListener<ApplicationReadyEvent> {
 
   @Autowired
-  DiscordProcessManager discordProcessManager;
+  ProcessManager processManager;
 
   @Autowired
-  GooglePubSubManager googlePubSubManager;
+  PubSubManager pubSubManager;
 
   @Autowired
   ShutdownThread shutdownThread;
@@ -28,9 +28,9 @@ class AppListener implements ApplicationListener<ApplicationReadyEvent> {
     Runtime.getRuntime().addShutdownHook(this.shutdownThread);
 
     // Start the Discord App
-    this.discordProcessManager.connect();
+    this.processManager.connect();
 
     // Start the PubSub listener
-    this.googlePubSubManager.start();
+    this.pubSubManager.start();
   }
 }
