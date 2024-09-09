@@ -39,7 +39,7 @@ public class DiscordListeners extends ListenerAdapter {
         ShardManager manager = jda.getShardManager();
         // There is surely a cleaner way to do this in a filter or something but
         // whatever. This works well enough.
-        Boolean shardsLoggingIn = false;
+        boolean shardsLoggingIn = false;
         for (var entry : manager.getStatuses().entrySet()) {
             if (entry.getValue() == JDA.Status.LOGGING_IN) {
                 shardsLoggingIn = true;

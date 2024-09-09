@@ -20,8 +20,8 @@ public class Config {
     private static final String PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME = "logEntrySubscriptionName";
     private static final String FIRESTORE_COLLECTION_ID = "firesStoreCollectionId";
 
-    private static Properties publicProperties = new Properties();
-    private static Properties secretProperties = new Properties();
+    private static final Properties publicProperties = new Properties();
+    private static final Properties secretProperties = new Properties();
     private static SecretManagerServiceClient secretManagerServiceClient;
 
     static {
