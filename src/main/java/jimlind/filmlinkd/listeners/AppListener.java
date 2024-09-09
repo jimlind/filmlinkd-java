@@ -1,6 +1,6 @@
 package jimlind.filmlinkd.listeners;
 
-import jimlind.filmlinkd.PubSub;
+import jimlind.filmlinkd.systems.google.GooglePubSubManager;
 import jimlind.filmlinkd.systems.discord.DiscordProcessManager;
 import jimlind.filmlinkd.threads.ShutdownThread;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ class AppListener implements ApplicationListener<ApplicationReadyEvent> {
   DiscordProcessManager discordProcessManager;
 
   @Autowired
-  PubSub pubSub;
+  GooglePubSubManager googlePubSubManager;
 
   @Autowired
   ShutdownThread shutdownThread;
@@ -31,6 +31,6 @@ class AppListener implements ApplicationListener<ApplicationReadyEvent> {
     this.discordProcessManager.connect();
 
     // Start the PubSub listener
-    this.pubSub.start();
+    this.googlePubSubManager.start();
   }
 }

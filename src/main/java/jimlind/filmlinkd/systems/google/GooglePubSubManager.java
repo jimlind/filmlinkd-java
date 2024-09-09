@@ -1,7 +1,9 @@
-package jimlind.filmlinkd;
+package jimlind.filmlinkd.systems.google;
 
 import java.io.IOException;
 
+import jimlind.filmlinkd.Config;
+import jimlind.filmlinkd.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PubSub {
+public class GooglePubSubManager {
 
     @Autowired
     private Config config;
