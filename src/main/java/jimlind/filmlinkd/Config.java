@@ -1,15 +1,13 @@
 package jimlind.filmlinkd;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.springframework.stereotype.Component;
-
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.util.Properties;
 
 @Component
 @Slf4j

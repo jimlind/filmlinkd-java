@@ -1,11 +1,10 @@
 package jimlind.filmlinkd;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
+import com.google.pubsub.v1.PubsubMessage;
 import org.springframework.stereotype.Component;
 
-import com.google.pubsub.v1.PubsubMessage;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 @Component
 // Queue exists so that I can rate limit the amount of processing that happens.
