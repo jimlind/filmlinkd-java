@@ -1,4 +1,4 @@
-package jimlind.filmlinkd.listeners;
+package jimlind.filmlinkd.listener;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -7,8 +7,8 @@ import java.util.TimerTask;
 import jimlind.filmlinkd.FirestoreUtility;
 import jimlind.filmlinkd.MessageUtility;
 import jimlind.filmlinkd.Queue;
-import jimlind.filmlinkd.models.Message;
-import jimlind.filmlinkd.models.User;
+import jimlind.filmlinkd.model.Message;
+import jimlind.filmlinkd.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

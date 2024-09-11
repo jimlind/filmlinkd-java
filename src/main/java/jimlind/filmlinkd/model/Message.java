@@ -1,4 +1,4 @@
-package jimlind.filmlinkd.models;
+package jimlind.filmlinkd.model;
 
 public class Message {
     public Entry entry;

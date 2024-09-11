@@ -10,8 +10,8 @@ import java.util.Locale;
 
 import io.github.furstenheim.Options;
 import io.github.furstenheim.OptionsBuilder;
-import jimlind.filmlinkd.models.Message;
-import jimlind.filmlinkd.models.User;
+import jimlind.filmlinkd.model.Message;
+import jimlind.filmlinkd.model.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
