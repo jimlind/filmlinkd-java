@@ -1,7 +1,7 @@
-package jimlind.filmlinkd.systems.discord;
+package jimlind.filmlinkd.system.discord;
 
 import jimlind.filmlinkd.Config;
-import jimlind.filmlinkd.listeners.DiscordListeners;
+import jimlind.filmlinkd.listener.DiscordListeners;
 import lombok.Getter;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -26,4 +26,9 @@ public class ProcessManager {
         this.shardManager = DefaultShardManagerBuilder.createLight(token).setShardsTotal(3).addEventListeners(discordListeners).build();
     }
 
+    public void disconnect() {
+        if (this.shardManager != null) {
+            this.shardManager.shutdown();
+        }
+    }
 }
