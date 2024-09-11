@@ -1,26 +1,24 @@
 package jimlind.filmlinkd.listener;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import com.google.gson.GsonBuilder;
+import com.google.pubsub.v1.PubsubMessage;
 import jimlind.filmlinkd.FirestoreUtility;
 import jimlind.filmlinkd.MessageUtility;
 import jimlind.filmlinkd.Queue;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.gson.GsonBuilder;
-import com.google.pubsub.v1.PubsubMessage;
-
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Component
 @Slf4j

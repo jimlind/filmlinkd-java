@@ -1,21 +1,19 @@
 package jimlind.filmlinkd.system.google;
 
-import java.util.Objects;
-
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
-import com.google.pubsub.v1.*;
-import jimlind.filmlinkd.Config;
-import jimlind.filmlinkd.Queue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.protobuf.Duration;
+import com.google.pubsub.v1.*;
 import com.google.pubsub.v1.Subscription.Builder;
-
+import jimlind.filmlinkd.Config;
+import jimlind.filmlinkd.Queue;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @Slf4j

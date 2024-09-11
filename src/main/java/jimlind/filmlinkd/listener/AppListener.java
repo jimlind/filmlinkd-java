@@ -1,7 +1,7 @@
 package jimlind.filmlinkd.listener;
 
-import jimlind.filmlinkd.system.google.PubSubManager;
 import jimlind.filmlinkd.system.discord.ProcessManager;
+import jimlind.filmlinkd.system.google.PubSubManager;
 import jimlind.filmlinkd.thread.ShutdownThread;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
