@@ -1,24 +1,19 @@
-package jimlind.filmlinkd.systems.google;
+package jimlind.filmlinkd.system.google;
 
-import java.io.IOException;
+import java.util.Objects;
 
+import com.google.cloud.pubsub.v1.AckReplyConsumer;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.pubsub.v1.*;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.api.gax.rpc.NotFoundException;
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
-import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.protobuf.Duration;
-import com.google.pubsub.v1.ExpirationPolicy;
-import com.google.pubsub.v1.PubsubMessage;
-import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.Subscription.Builder;
-import com.google.pubsub.v1.SubscriptionName;
-import com.google.pubsub.v1.TopicName;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,22 +39,16 @@ public class PubSubManager {
 
         TopicName topicName = TopicName.of(projectId, pubSubTopic);
         SubscriptionName subscriptionName = SubscriptionName.of(projectId, pubSubSubscription);
-        SubscriptionAdminClient subscriptionAdminClient;
 
+        // This client create is designed specifically for a try-with-resources statement
         try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
-            subscriptionAdminClient = client;
-        } catch (IOException e) {
+            // If the subscription doesn't exit, create it.
+            if (!hasSubscription(client, subscriptionName.toString())) {
+                createSubscription(client, subscriptionName, topicName);
+            }
+        } catch (Exception e) {
             log.error("Unable to setup connection to the PubSub client", e);
             return;
-        }
-
-        try {
-            subscriptionAdminClient.getSubscription(subscriptionName);
-        } catch (NotFoundException e) {
-            Builder builder = Subscription.newBuilder().setName(subscriptionName.toString())
-                    .setTopic(topicName.toString()).setAckDeadlineSeconds(10)
-                    .setMessageRetentionDuration(retentionDuration).setExpirationPolicy(expirationPolicy);
-            subscriptionAdminClient.createSubscription(builder.build());
         }
 
         // Create an asynchronous message receiver
@@ -74,7 +63,7 @@ public class PubSubManager {
         // Wire the receiver to the subscription
         this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
         this.subscriber.startAsync().awaitRunning();
-        log.info("Staring Listening for Messages on {}", subscriptionName.toString());
+        log.info("Staring Listening for Messages on {}", subscriptionName);
     }
 
     public void stop() {
@@ -85,5 +74,22 @@ public class PubSubManager {
             log.info("Stopping PubSub with no Active Subscriptions");
         }
 
+    }
+
+    private void createSubscription(SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
+        Builder builder = Subscription.newBuilder().setName(subscriptionName.toString())
+            .setTopic(topicName.toString()).setAckDeadlineSeconds(10)
+            .setMessageRetentionDuration(retentionDuration).setExpirationPolicy(expirationPolicy);
+        client.createSubscription(builder.build());
+    }
+
+    private boolean hasSubscription(SubscriptionAdminClient client, String subscriptionName) {
+        String project = ProjectName.of(this.config.getGoogleProjectId()).toString();
+        for (Subscription subscription : client.listSubscriptions(project).iterateAll()) {
+            if (Objects.equals(subscription.getName(), subscriptionName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
