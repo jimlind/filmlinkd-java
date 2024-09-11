@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
         log.info("Starting Things Up!");
         SpringApplication.run(Main.class, args);
+
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
