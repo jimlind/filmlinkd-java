@@ -13,8 +13,8 @@ import com.google.cloud.firestore.FirestoreOptions.Builder;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 
-import jimlind.filmlinkd.models.User;
-import jimlind.filmlinkd.models.User.Channel;
+import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.model.User.Channel;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -44,13 +44,11 @@ public class FirestoreUtility {
         QueryDocumentSnapshot document = documents.get(0);
 
         try {
-            user = document.toObject(User.class);
+            return document.toObject(User.class);
         } catch (Exception e) {
-            log.error("Unable to Cast User via LetterboxdID [" + userLID + "]");
+            log.error("Unable to Cast User via LetterboxdID [{}]", userLID);
             return null;
         }
-
-        return user;
     }
 
     public ArrayList<String> getUserChannelList(String userLID) throws Exception {
