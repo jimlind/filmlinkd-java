@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserFactory {
 
-    public User createFromDocument(QueryDocumentSnapshot document) {
-        try {
-            return document.toObject(User.class);
-        } catch (Exception e) {
-            return null;
-        }
+  public User createFromDocument(QueryDocumentSnapshot document) {
+    try {
+      return document.toObject(User.class);
+    } catch (Exception e) {
+      return null;
     }
+  }
 }
