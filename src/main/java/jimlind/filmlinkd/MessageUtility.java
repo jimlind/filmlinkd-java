@@ -1,10 +1,13 @@
 package jimlind.filmlinkd;
 
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import io.github.furstenheim.CopyDown;
 import io.github.furstenheim.Options;
 import io.github.furstenheim.OptionsBuilder;
+import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.google.FirestoreManager;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -25,7 +28,9 @@ import java.util.Locale;
 @Slf4j
 public class MessageUtility {
     @Autowired
-    private FirestoreUtility firestoreUtility;
+    private FirestoreManager firestoreManager;
+    @Autowired
+    private UserFactory userFactory;
 
     public ArrayList<String> getChannelList(Message message) {
         ArrayList<String> channelList = new ArrayList<String>();
@@ -35,7 +40,9 @@ public class MessageUtility {
         }
 
         try {
-            return this.firestoreUtility.getUserChannelList(message.entry.userLid);
+            QueryDocumentSnapshot document = this.firestoreManager.getUserDocument(message.entry.userLid);
+            User user = this.userFactory.createFromDocument(document);
+            return user.getChannelList();
         } catch (Exception e) {
             log.info("Unable to fetch channel list from user", e);
         }

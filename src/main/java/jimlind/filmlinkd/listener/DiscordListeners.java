@@ -1,12 +1,14 @@
 package jimlind.filmlinkd.listener;
 
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
-import jimlind.filmlinkd.FirestoreUtility;
 import jimlind.filmlinkd.MessageUtility;
 import jimlind.filmlinkd.Queue;
+import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.google.FirestoreManager;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -24,11 +26,13 @@ import java.util.TimerTask;
 @Slf4j
 public class DiscordListeners extends ListenerAdapter {
     @Autowired
-    private FirestoreUtility firestoreUtility;
+    private FirestoreManager firestoreManager;
     @Autowired
     private MessageUtility messageUtility;
     @Autowired
     private Queue queue;
+    @Autowired
+    private UserFactory userFactory;
 
     @Override
     public void onReady(ReadyEvent e) {
@@ -64,11 +68,12 @@ public class DiscordListeners extends ListenerAdapter {
                     return;
                 }
 
-                Message message = new GsonBuilder().create().fromJson(data, Message.class);
                 User user = null;
+                Message message = new GsonBuilder().create().fromJson(data, Message.class);
                 try {
-                    user = firestoreUtility.getUser(message.entry.userLid);
-                } catch (Exception ex) {
+                    QueryDocumentSnapshot userDocument = firestoreManager.getUserDocument(message.entry.userLid);
+                    user = userFactory.createFromDocument(userDocument);
+                } catch (Exception e) {
                     log.warn("Invalid user [{}] passed in PubSub message", message.entry.userLid);
                 }
                 ArrayList<String> channelList = messageUtility.getChannelList(message);
