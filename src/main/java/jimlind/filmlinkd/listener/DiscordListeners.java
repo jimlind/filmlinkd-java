@@ -3,7 +3,7 @@ package jimlind.filmlinkd.listener;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
-import jimlind.filmlinkd.MessageUtility;
+import jimlind.filmlinkd.factory.messageEmbed.DiaryEntryEmbedFactory;
 import jimlind.filmlinkd.system.google.PubSubQueue;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.Message;
@@ -28,7 +28,7 @@ public class DiscordListeners extends ListenerAdapter {
     @Autowired
     private FirestoreManager firestoreManager;
     @Autowired
-    private MessageUtility messageUtility;
+    private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
     @Autowired
     private PubSubQueue pubSubQueue;
     @Autowired
@@ -76,13 +76,13 @@ public class DiscordListeners extends ListenerAdapter {
                 } catch (Exception e) {
                     log.warn("Invalid user [{}] passed in PubSub message", message.entry.userLid);
                 }
-                ArrayList<String> channelList = messageUtility.getChannelList(message);
+                ArrayList<String> channelList = getChannelListFromMessage(message);
 
                 for (String channelId : channelList) {
                     try {
                         GuildMessageChannel channel = jda.getChannelById(GuildMessageChannel.class, channelId);
                         if (channel != null && user != null) {
-                            channel.sendMessageEmbeds(messageUtility.createEmbeds(message, user)).queue();
+                            channel.sendMessageEmbeds(diaryEntryEmbedFactory.create(message, user)).queue();
                         }
                     } catch (Exception e) {
                         String name = message.entry.userName;
@@ -96,6 +96,24 @@ public class DiscordListeners extends ListenerAdapter {
         };
         // I can probably make this a lot shorter for actual use
         timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    private ArrayList<String> getChannelListFromMessage(Message message) {
+        ArrayList<String> channelList = new ArrayList<String>();
+        if (!message.channelId.isBlank()) {
+            channelList.add(message.channelId);
+            return channelList;
+        }
+
+        try {
+            QueryDocumentSnapshot document = this.firestoreManager.getUserDocument(message.entry.userLid);
+            User user = this.userFactory.createFromDocument(document);
+            return user.getChannelList();
+        } catch (Exception e) {
+            log.info("Unable to fetch channel list from user", e);
+        }
+
+        return channelList;
     }
 
 }

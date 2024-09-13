@@ -1,19 +1,15 @@
-package jimlind.filmlinkd;
+package jimlind.filmlinkd.factory.messageEmbed;
 
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import io.github.furstenheim.CopyDown;
 import io.github.furstenheim.Options;
 import io.github.furstenheim.OptionsBuilder;
-import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
-import jimlind.filmlinkd.system.google.FirestoreManager;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -26,31 +22,8 @@ import java.util.Locale;
 
 @Component
 @Slf4j
-public class MessageUtility {
-    @Autowired
-    private FirestoreManager firestoreManager;
-    @Autowired
-    private UserFactory userFactory;
-
-    public ArrayList<String> getChannelList(Message message) {
-        ArrayList<String> channelList = new ArrayList<String>();
-        if (!message.channelId.isBlank()) {
-            channelList.add(message.channelId);
-            return channelList;
-        }
-
-        try {
-            QueryDocumentSnapshot document = this.firestoreManager.getUserDocument(message.entry.userLid);
-            User user = this.userFactory.createFromDocument(document);
-            return user.getChannelList();
-        } catch (Exception e) {
-            log.info("Unable to fetch channel list from user", e);
-        }
-
-        return channelList;
-    }
-
-    public ArrayList<MessageEmbed> createEmbeds(Message message, User user) {
+public class DiaryEntryEmbedFactory {
+    public ArrayList<MessageEmbed> create(Message message, User user) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         String profileName = user.displayName;
