@@ -34,4 +34,17 @@ public class User {
         public String icon;
         public String text;
     }
+
+    public ArrayList<String> getChannelList() throws Exception {
+        ArrayList<String> channelListResults = new ArrayList<String>();
+        if (this.channelList == null) {
+            return channelListResults;
+        }
+
+        for (Channel channel : this.channelList) {
+            channelListResults.add(channel.channelId);
+        }
+
+        return channelListResults;
+    }
 }
