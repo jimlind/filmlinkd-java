@@ -4,7 +4,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
 import jimlind.filmlinkd.MessageUtility;
-import jimlind.filmlinkd.Queue;
+import jimlind.filmlinkd.system.google.PubSubQueue;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
@@ -30,7 +30,7 @@ public class DiscordListeners extends ListenerAdapter {
     @Autowired
     private MessageUtility messageUtility;
     @Autowired
-    private Queue queue;
+    private PubSubQueue pubSubQueue;
     @Autowired
     private UserFactory userFactory;
 
@@ -49,7 +49,7 @@ public class DiscordListeners extends ListenerAdapter {
             }
         }
         // When shards are logging in (true) the the write only lock stays on (true)
-        queue.writeOnlyLock = shardsLoggingIn;
+        pubSubQueue.writeOnlyLock = shardsLoggingIn;
 
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -62,7 +62,7 @@ public class DiscordListeners extends ListenerAdapter {
                 // loaded.
                 String data;
                 try {
-                    PubsubMessage result = queue.get(jda.getShardInfo().getShardId(), manager.getShardsTotal());
+                    PubsubMessage result = pubSubQueue.get(jda.getShardInfo().getShardId(), manager.getShardsTotal());
                     data = result.getData().toStringUtf8();
                 } catch (Exception e) {
                     return;

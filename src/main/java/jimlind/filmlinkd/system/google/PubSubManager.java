@@ -8,7 +8,6 @@ import com.google.protobuf.Duration;
 import com.google.pubsub.v1.*;
 import com.google.pubsub.v1.Subscription.Builder;
 import jimlind.filmlinkd.Config;
-import jimlind.filmlinkd.Queue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class PubSubManager {
     private Config config;
 
     @Autowired
-    private Queue queue;
+    private PubSubQueue pubSubQueue;
 
     private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
     private final Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
@@ -54,7 +53,7 @@ public class PubSubManager {
         // happens. If we let every PubSub event trigger some logic it can take over the
         // CPU really quickly.
         MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
-            this.queue.set(message);
+            this.pubSubQueue.set(message);
             consumer.ack();
         };
 

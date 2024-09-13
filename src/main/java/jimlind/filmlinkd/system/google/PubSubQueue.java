@@ -1,4 +1,4 @@
-package jimlind.filmlinkd;
+package jimlind.filmlinkd.system.google;
 
 import com.google.pubsub.v1.PubsubMessage;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 //
 // If there was some kind of throttled events in Spring I wouldn't need to do
 // this. I should go look that up and see if it does exist.
-public class Queue {
+public class PubSubQueue {
     public Boolean writeOnlyLock = true;
 
     private final LinkedList<PubsubMessage> messageList = new LinkedList<PubsubMessage>();
