@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// This Class is now too big but I don't know what to name the things that are in it otherwise yet.
 @Component
 @Slf4j
 public class DiscordListeners extends ListenerAdapter {
