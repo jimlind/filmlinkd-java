@@ -73,7 +73,7 @@ public class DiscordListeners extends ListenerAdapter {
             try {
               QueryDocumentSnapshot userDocument =
                   firestoreManager.getUserDocument(message.entry.userLid);
-              user = userFactory.createFromDocument(userDocument);
+              user = userFactory.createFromSnapshot(userDocument);
             } catch (Exception e) {
               log.warn("Invalid user [{}] passed in PubSub message", message.entry.userLid);
             }
@@ -86,7 +86,9 @@ public class DiscordListeners extends ListenerAdapter {
                 if (channel != null && user != null) {
                   channel
                       .sendMessageEmbeds(diaryEntryEmbedFactory.create(message, user))
-                      .queue((recievedMessage) -> sendSuccess((ReceivedMessage) recievedMessage));
+                      .queue(
+                          (recievedMessage) ->
+                              sendSuccess((ReceivedMessage) recievedMessage, message.entry));
                 }
               } catch (Exception e) {
                 String name = message.entry.userName;
@@ -100,8 +102,13 @@ public class DiscordListeners extends ListenerAdapter {
     timer.scheduleAtFixedRate(task, 0, 1000);
   }
 
-  private void sendSuccess(ReceivedMessage receivedMessage) {
-    log.info("The Message Was Successfully Sent - Log it in the Database.");
+  private void sendSuccess(ReceivedMessage receivedMessage, Message.Entry entry) {
+    boolean updateSuccess =
+        firestoreManager.updateUserPrevious(
+            entry.userLid, entry.lid, entry.publishedDate, entry.link);
+    if (updateSuccess) {
+      log.info("Successfully sent message");
+    }
   }
 
   private ArrayList<String> getChannelListFromMessage(Message message) {
@@ -113,7 +120,7 @@ public class DiscordListeners extends ListenerAdapter {
 
     try {
       QueryDocumentSnapshot document = this.firestoreManager.getUserDocument(message.entry.userLid);
-      User user = this.userFactory.createFromDocument(document);
+      User user = this.userFactory.createFromSnapshot(document);
       return user.getChannelList();
     } catch (Exception e) {
       log.info("Unable to fetch channel list from user", e);
