@@ -37,6 +37,7 @@ Achievements of this project right now.
 Next.
 
 - Test what happens when "previous" doesn't exist on a user
+- Write logging messages/data so existing dashboards will continue to function
 
 Open Larger Bugs.
 
