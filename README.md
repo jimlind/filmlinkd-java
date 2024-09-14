@@ -32,11 +32,11 @@ Achievements of this project right now.
 - Checked: No Watched Date, No Release Year (Best Served Cold), Usernames with underscores (\_star\_)
 - Fixed Haiku Dan formatting
 - Make sure thing restarts if it fails
+- Update database after embed written
 
 Next.
 
-- Update database after embed written
-
+- Test what happens when "previous" doesn't exist on a user
 
 Open Larger Bugs.
 
