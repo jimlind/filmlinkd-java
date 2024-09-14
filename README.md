@@ -33,11 +33,12 @@ Achievements of this project right now.
 - Fixed Haiku Dan formatting
 - Make sure thing restarts if it fails
 - Update database after embed written
+- Test what happens when "previous" doesn't exist on a user
 
 Next.
 
-- Test what happens when "previous" doesn't exist on a user
 - Write logging messages/data so existing dashboards will continue to function
+- Update the Java VM on docker image build
 
 Open Larger Bugs.
 
