@@ -1,6 +1,10 @@
 package jimlind.filmlinkd.model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class User {
   public String id;
@@ -46,5 +50,11 @@ public class User {
     }
 
     return channelListResults;
+  }
+
+  public Map<String, Object> toMap() {
+    Gson gson = new Gson();
+    String json = gson.toJson(this);
+    return gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
   }
 }
