@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserFactory {
 
-  public User createFromDocument(QueryDocumentSnapshot document) {
+  public User createFromSnapshot(QueryDocumentSnapshot snapshot) {
     try {
-      return document.toObject(User.class);
+      return snapshot.toObject(User.class);
     } catch (Exception e) {
       return null;
     }
