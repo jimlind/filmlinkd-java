@@ -10,25 +10,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProcessManager {
-    @Autowired
-    private Config config;
+  @Autowired private Config config;
+  @Autowired private DiscordListeners discordListeners;
+  @Getter private ShardManager shardManager;
 
-    @Autowired
-    private DiscordListeners discordListeners;
+  public void connect() {
+    String token = config.getDiscordBotToken();
+    this.shardManager =
+        DefaultShardManagerBuilder.createLight(token).addEventListeners(discordListeners).build();
+  }
 
-    @Getter
-    private ShardManager shardManager;
-
-    public void connect() {
-        String token = config.getDiscordBotToken();
-
-        // TODO: Remove the 3 total shards, that's just a good way for me to test it is doing things
-        this.shardManager = DefaultShardManagerBuilder.createLight(token).setShardsTotal(3).addEventListeners(discordListeners).build();
+  public void disconnect() {
+    if (this.shardManager != null) {
+      this.shardManager.shutdown();
     }
-
-    public void disconnect() {
-        if (this.shardManager != null) {
-            this.shardManager.shutdown();
-        }
-    }
+  }
 }
