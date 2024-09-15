@@ -12,6 +12,17 @@ steps:
       - >-
         $_AR_HOSTNAME/$PROJECT_ID/github.com/jimlind/$REPO_NAME-release:$SHORT_SHA
     id: Push
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    args:
+      - compute
+      - instances
+      - update-container
+      - filmlinkd-java
+      - '--zone=$_DEPLOY_ZONE'
+      - >-
+        --container-image=$_AR_HOSTNAME/$PROJECT_ID/github.com/jimlind/$REPO_NAME-release:$SHORT_SHA
+    id: Update
+    entrypoint: gcloud
 
 substitutions:
   _DEPLOY_ZONE: us-central1-a
