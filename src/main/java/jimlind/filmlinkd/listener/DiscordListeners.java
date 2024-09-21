@@ -3,6 +3,10 @@ package jimlind.filmlinkd.listener;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.GsonBuilder;
 import com.google.pubsub.v1.PubsubMessage;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.DiaryEntryEmbedFactory;
 import jimlind.filmlinkd.model.Message;
@@ -11,17 +15,13 @@ import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.google.PubSubQueue;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.internal.entities.ReceivedMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 // This Class is now too big but I don't know what to name the things that are in it otherwise yet.
 @Component
@@ -37,6 +37,14 @@ public class DiscordListeners extends ListenerAdapter {
     JDA jda = e.getJDA();
 
     ShardManager manager = jda.getShardManager();
+    if (manager == null) {
+      log.error("Problem Getting ShardManager");
+      return;
+    }
+
+    log.info("Discord Client Logged In on {} Servers", manager.getGuildCache().size());
+    int shardId = jda.getShardInfo().getShardId();
+
     // There is surely a cleaner way to do this in a filter or something but
     // whatever. This works well enough.
     boolean shardsLoggingIn = false;
@@ -61,40 +69,67 @@ public class DiscordListeners extends ListenerAdapter {
             // loaded.
             String data;
             try {
-              PubsubMessage result =
-                  pubSubQueue.get(jda.getShardInfo().getShardId(), manager.getShardsTotal());
+              PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
               data = result.getData().toStringUtf8();
             } catch (Exception e) {
+              // Don't log or raise because expected. Yes this is bad, so it'll get fixed later
               return;
             }
 
-            User user = null;
+            // Translate to a message object
             Message message = new GsonBuilder().create().fromJson(data, Message.class);
-            try {
-              QueryDocumentSnapshot userDocument =
-                  firestoreManager.getUserDocument(message.entry.userLid);
-              user = userFactory.createFromSnapshot(userDocument);
-            } catch (Exception e) {
-              log.warn("Invalid user [{}] passed in PubSub message", message.entry.userLid);
-            }
-            ArrayList<String> channelList = getChannelListFromMessage(message);
 
-            for (String channelId : channelList) {
-              try {
-                GuildMessageChannel channel =
-                    jda.getChannelById(GuildMessageChannel.class, channelId);
-                if (channel != null && user != null) {
-                  channel
-                      .sendMessageEmbeds(diaryEntryEmbedFactory.create(message, user))
-                      .queue(
-                          (recievedMessage) ->
-                              sendSuccess((ReceivedMessage) recievedMessage, message.entry));
-                }
-              } catch (Exception e) {
-                String name = message.entry.userName;
-                String film = message.entry.filmTitle;
-                log.info("Unable to write message for [{}] [{}] to [{}]", name, film, channelId, e);
+            // Attempt to get user based on Message
+            QueryDocumentSnapshot snapshot;
+            try {
+              snapshot = firestoreManager.getUserDocument(message.entry.userLid);
+            } catch (Exception e) {
+              log.atWarn()
+                  .setMessage("Invalid User Passed in PubSub Message")
+                  .addKeyValue("message", message)
+                  .log();
+              return;
+            }
+
+            // Translate to user object
+            User user = userFactory.createFromSnapshot(snapshot);
+            if (user == null) {
+              log.atWarn()
+                  .setMessage("Unable to Create User from Snapshot")
+                  .addKeyValue("message", message)
+                  .addKeyValue("snapshot", snapshot)
+                  .log();
+              return;
+            }
+
+            for (String channelId : getChannelListFromMessage(message)) {
+              GuildMessageChannel channel =
+                  jda.getChannelById(GuildMessageChannel.class, channelId);
+
+              if (channel == null) {
+                log.atWarn()
+                    .setMessage("Unable to Find Channel")
+                    .addKeyValue("channelId", channelId)
+                    .addKeyValue("message", message)
+                    .log();
+                continue;
               }
+
+              ArrayList<MessageEmbed> embedList;
+              try {
+                embedList = diaryEntryEmbedFactory.create(message, user);
+              } catch (Exception e) {
+                log.atWarn()
+                    .setMessage("Creating Diary Entry Embed Failed")
+                    .addKeyValue("message", message)
+                    .addKeyValue("user", user)
+                    .log();
+                continue;
+              }
+
+              channel
+                  .sendMessageEmbeds(embedList)
+                  .queue(m -> sendSuccess(m, message, channel), m -> sendFailure(message, channel));
             }
           }
         };
@@ -102,13 +137,43 @@ public class DiscordListeners extends ListenerAdapter {
     timer.scheduleAtFixedRate(task, 0, 1000);
   }
 
-  private void sendSuccess(ReceivedMessage receivedMessage, Message.Entry entry) {
+  private void sendSuccess(
+      net.dv8tion.jda.api.entities.Message jdaMessage,
+      Message message,
+      GuildMessageChannel channel) {
+    Message.Entry entry = message.entry;
+
+    // Log delay time between now and published time
+    log.atInfo()
+        .setMessage("Entry Publish Delay")
+        .addKeyValue("delay", Instant.now().toEpochMilli() - entry.updatedDate)
+        .addKeyValue("source", entry.publishSource)
+        .log();
+
+    // Log a too much information about the successfully sent message
+    log.atDebug()
+        .setMessage("Successfully Sent Message")
+        .addKeyValue("channel", channel)
+        .addKeyValue("message", message)
+        .addKeyValue("jdaMessage", jdaMessage)
+        .log();
+
     boolean updateSuccess =
         firestoreManager.updateUserPrevious(
             entry.userLid, entry.lid, entry.publishedDate, entry.link);
-    if (updateSuccess) {
-      log.info("Successfully sent message");
+
+    if (!updateSuccess) {
+      System.out.println("boog");
+      log.atError().setMessage("Entry did not Update").addKeyValue("entry", message.entry).log();
     }
+  }
+
+  private void sendFailure(Message message, GuildMessageChannel channel) {
+    log.atWarn()
+        .setMessage("Failed to Send Message")
+        .addKeyValue("message", message)
+        .addKeyValue("channel", channel)
+        .log();
   }
 
   private ArrayList<String> getChannelListFromMessage(Message message) {
