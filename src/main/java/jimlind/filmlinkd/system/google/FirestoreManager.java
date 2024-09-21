@@ -45,11 +45,22 @@ public class FirestoreManager {
 
   public boolean updateUserPrevious(
       String userLID, String diaryLID, long diaryPublishedDate, String diaryURI) {
-    try {
-      QueryDocumentSnapshot snapshot = getUserDocument(userLID);
-      User user = this.userFactory.createFromSnapshot(snapshot);
-      ArrayList<String> previousList = user.previous.list;
 
+    QueryDocumentSnapshot snapshot;
+    try {
+      snapshot = getUserDocument(userLID);
+    } catch (Exception e) {
+      log.atWarn()
+          .setMessage("Unable to Update Previous: User Not Found")
+          .addKeyValue("userLID", userLID)
+          .log();
+      return false;
+    }
+
+    User user = this.userFactory.createFromSnapshot(snapshot);
+    ArrayList<String> previousList = user.previous.list;
+
+    try {
       if (LidComparer.compare(user.previous.lid, diaryLID) < 0) {
         // This is the important data to update
         // The scraping process uses it to determine which entries are new
@@ -65,7 +76,11 @@ public class FirestoreManager {
 
       snapshot.getReference().update(user.toMap());
     } catch (Exception e) {
-      log.error("Unable to update user", e);
+      log.atError()
+          .setMessage("Unable to Update Previous: Update Failed")
+          .addKeyValue("user", user)
+          .addKeyValue("diaryLID", diaryLID)
+          .log();
       return false;
     }
 
