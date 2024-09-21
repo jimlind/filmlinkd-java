@@ -38,6 +38,7 @@ Achievements of this project right now.
 
 Next.
 
+- Write logs with additional data, not just a message
 - Write logging messages/data so existing dashboards will continue to function
 
 Open Larger Bugs.
