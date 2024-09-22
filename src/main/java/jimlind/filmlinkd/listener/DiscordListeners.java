@@ -23,7 +23,9 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-// This Class is now too big but I don't know what to name the things that are in it otherwise yet.
+// This Class is now too big, but I don't know what to name the things that are in it otherwise yet.
+// There's also something funky here that google-java-format says it can't parse this file.
+
 @Component
 @Slf4j
 public class DiscordListeners extends ListenerAdapter {
