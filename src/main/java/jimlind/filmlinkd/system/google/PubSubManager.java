@@ -17,76 +17,80 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class PubSubManager {
+  @Autowired private Config config;
+  @Autowired private PubSubQueue pubSubQueue;
 
-    @Autowired
-    private Config config;
+  private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
+  private final Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
+  private final ExpirationPolicy expirationPolicy =
+      ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
+  private Subscriber subscriber;
 
-    @Autowired
-    private PubSubQueue pubSubQueue;
+  public void start() {
+    String projectId = this.config.getGoogleProjectId();
+    String pubSubTopic = this.config.getPubSubLogEntryTopicName();
+    String pubSubSubscription = this.config.getPubSubLogEntrySubscriptionName();
 
-    private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
-    private final Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
-    private final ExpirationPolicy expirationPolicy = ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
-    private Subscriber subscriber;
+    TopicName topicName = TopicName.of(projectId, pubSubTopic);
+    SubscriptionName subscriptionName = SubscriptionName.of(projectId, pubSubSubscription);
 
-    public void start() {
-        String projectId = this.config.getGoogleProjectId();
-        String pubSubTopic = this.config.getPubSubLogEntryTopicName();
-        String pubSubSubscription = this.config.getPubSubLogEntrySubscriptionName();
+    // This client create is designed specifically for a try-with-resources statement
+    try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
+      // If the subscription doesn't exit, create it.
+      if (!hasSubscription(client, subscriptionName.toString())) {
+        createSubscription(client, subscriptionName, topicName);
+      }
+    } catch (Exception e) {
+      log.error("Unable to setup connection to the PubSub client", e);
+      return;
+    }
 
-        TopicName topicName = TopicName.of(projectId, pubSubTopic);
-        SubscriptionName subscriptionName = SubscriptionName.of(projectId, pubSubSubscription);
-
-        // This client create is designed specifically for a try-with-resources statement
-        try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
-            // If the subscription doesn't exit, create it.
-            if (!hasSubscription(client, subscriptionName.toString())) {
-                createSubscription(client, subscriptionName, topicName);
-            }
-        } catch (Exception e) {
-            log.error("Unable to setup connection to the PubSub client", e);
-            return;
-        }
-
-        // Create an asynchronous message receiver
-        // This writes to a queue so that I can rate limit the amount of processing that
-        // happens. If we let every PubSub event trigger some logic it can take over the
-        // CPU really quickly.
-        MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
-            this.pubSubQueue.set(message);
-            consumer.ack();
+    // Create an asynchronous message receiver
+    // This writes to a queue so that I can rate limit the amount of processing that
+    // happens. If we let every PubSub event trigger some logic it can take over the
+    // CPU really quickly.
+    MessageReceiver receiver =
+        (PubsubMessage message, AckReplyConsumer consumer) -> {
+          this.pubSubQueue.set(message);
+          consumer.ack();
         };
 
-        // Wire the receiver to the subscription
-        this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
-        this.subscriber.startAsync().awaitRunning();
-        log.info("Staring Listening for Messages on {}", subscriptionName);
-    }
+    // Wire the receiver to the subscription
+    this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
+    this.subscriber.startAsync().awaitRunning();
+    log.info("Staring Listening for Messages on {}", subscriptionName);
+  }
 
-    public void stop() {
-        if (this.subscriber != null) {
-            log.info("Stopping PubSub Listening for Messages on {}", this.subscriber.getSubscriptionNameString());
-            this.subscriber.stopAsync();
-        } else {
-            log.info("Stopping PubSub with no Active Subscriptions");
-        }
-
+  public void stop() {
+    if (this.subscriber != null) {
+      log.info(
+          "Stopping PubSub Listening for Messages on {}",
+          this.subscriber.getSubscriptionNameString());
+      this.subscriber.stopAsync();
+    } else {
+      log.info("Stopping PubSub with no Active Subscriptions");
     }
+  }
 
-    private void createSubscription(SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
-        Builder builder = Subscription.newBuilder().setName(subscriptionName.toString())
-            .setTopic(topicName.toString()).setAckDeadlineSeconds(10)
-            .setMessageRetentionDuration(retentionDuration).setExpirationPolicy(expirationPolicy);
-        client.createSubscription(builder.build());
-    }
+  private void createSubscription(
+      SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
+    Builder builder =
+        Subscription.newBuilder()
+            .setName(subscriptionName.toString())
+            .setTopic(topicName.toString())
+            .setAckDeadlineSeconds(10)
+            .setMessageRetentionDuration(retentionDuration)
+            .setExpirationPolicy(expirationPolicy);
+    client.createSubscription(builder.build());
+  }
 
-    private boolean hasSubscription(SubscriptionAdminClient client, String subscriptionName) {
-        String project = ProjectName.of(this.config.getGoogleProjectId()).toString();
-        for (Subscription subscription : client.listSubscriptions(project).iterateAll()) {
-            if (Objects.equals(subscription.getName(), subscriptionName)) {
-                return true;
-            }
-        }
-        return false;
+  private boolean hasSubscription(SubscriptionAdminClient client, String subscriptionName) {
+    String project = ProjectName.of(this.config.getGoogleProjectId()).toString();
+    for (Subscription subscription : client.listSubscriptions(project).iterateAll()) {
+      if (Objects.equals(subscription.getName(), subscriptionName)) {
+        return true;
+      }
     }
+    return false;
+  }
 }
