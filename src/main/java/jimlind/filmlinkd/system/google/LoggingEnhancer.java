@@ -6,26 +6,52 @@ import com.google.cloud.logging.Payload;
 import com.google.cloud.logging.logback.LoggingEventEnhancer;
 import com.google.gson.Gson;
 import java.util.HashMap;
+import java.util.List;
 import org.slf4j.event.KeyValuePair;
 
 public class LoggingEnhancer implements LoggingEventEnhancer {
 
   @Override
-  public void enhanceLogEntry(LogEntry.Builder logEntry, ILoggingEvent e) {
+  public void enhanceLogEntry(LogEntry.Builder logEntryBuilder, ILoggingEvent loggingEvent) {
     HashMap<String, Object> map = new HashMap<>();
-    map.put("thread", e.getThreadName());
-    map.put("context", e.getLoggerContextVO().getName());
-    map.put("logger", e.getLoggerName());
+    map.put("thread", loggingEvent.getThreadName());
+    map.put("context", loggingEvent.getLoggerContextVO().getName());
+    map.put("logger", loggingEvent.getLoggerName());
 
+    List<KeyValuePair> valueList = loggingEvent.getKeyValuePairs();
     HashMap<String, Object> metadata = new HashMap<>();
-    for (KeyValuePair pair : e.getKeyValuePairs()) {
-      metadata.put(pair.key, new Gson().toJson(pair.value));
+    if (valueList != null) {
+      for (KeyValuePair pair : valueList) {
+        metadata.put(pair.key, parseValue(pair.value));
+      }
+      map.put("metadata", metadata);
     }
-    map.put("metadata", metadata);
 
-    Payload.JsonPayload payload = logEntry.build().getPayload();
+    Payload.JsonPayload payload = logEntryBuilder.build().getPayload();
     map.putAll(payload.getDataAsMap());
 
-    logEntry.setPayload(Payload.JsonPayload.of(map));
+    logEntryBuilder.setPayload(Payload.JsonPayload.of(map));
+  }
+
+  private Object parseValue(Object input) {
+    if (input instanceof String
+        || input instanceof Integer
+        || input instanceof Long
+        || input instanceof Float
+        || input instanceof Double) {
+      return input;
+    }
+
+    try {
+      return new Gson().toJson(input);
+    } catch (Exception e) {
+      // Do Nothing. This can fail for a multitude of reasonable reasons
+    }
+
+    try {
+      return input.toString();
+    } catch (Exception e) {
+      return e.toString();
+    }
   }
 }

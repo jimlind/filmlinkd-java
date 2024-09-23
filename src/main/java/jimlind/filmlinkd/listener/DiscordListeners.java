@@ -148,15 +148,16 @@ public class DiscordListeners extends ListenerAdapter {
     // Log delay time between now and published time
     log.atInfo()
         .setMessage("Entry Publish Delay")
-        .addKeyValue("delay", Instant.now().toEpochMilli() - entry.updatedDate)
+        .addKeyValue("delay", Instant.now().toEpochMilli() - entry.publishedDate)
         .addKeyValue("source", entry.publishSource)
         .log();
 
     // Log a too much information about the successfully sent message
-    log.atDebug()
+    log.atInfo()
         .setMessage("Successfully Sent Message")
-        .addKeyValue("channel", channel)
+        .addKeyValue("channelId", channel.getId())
         .addKeyValue("message", message)
+        .addKeyValue("channel", channel)
         .addKeyValue("jdaMessage", jdaMessage)
         .log();
 
@@ -165,7 +166,6 @@ public class DiscordListeners extends ListenerAdapter {
             entry.userLid, entry.lid, entry.publishedDate, entry.link);
 
     if (!updateSuccess) {
-      System.out.println("boog");
       log.atError().setMessage("Entry did not Update").addKeyValue("entry", message.entry).log();
     }
   }

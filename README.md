@@ -35,11 +35,12 @@ Achievements of this project right now.
 - Update database after embed written
 - Test what happens when "previous" doesn't exist on a user
 - Update the Java VM on docker image build
+- Write logs with additional data, not just a message
+- Write logging messages/data so existing dashboards will continue to function
 
 Next.
 
-- Write logs with additional data, not just a message
-- Write logging messages/data so existing dashboards will continue to function
+- Something weird happens and it locks up when things seem very normal
 
 Open Larger Bugs.
 
