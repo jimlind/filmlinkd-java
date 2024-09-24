@@ -23,32 +23,28 @@ public class PubSubQueue {
     messageList.add(message);
   }
 
-  // This should be fixed probably to return a null instead of an exception that needs to get caught
-  // since the early
-  // exits are business as usual, but I wasn't thinking about that PubsubMessage|null as acceptable
-  // return types
-  public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal)
-      throws Exception {
+  public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal) {
     // Check if the specific ID was used for fetching and set it otherwise
     if (this.fetchIdList.contains(fetchClientId)) {
-      throw new Exception("Already Fetched this Resource");
+      return null;
     }
 
     // Don't allow reading until all fetching clients have connected
     if (writeOnlyLock) {
-      throw new Exception("Not Ready");
+      return null;
     }
 
-    // Don't return anything if nothing to return
-    if (messageList.isEmpty()) {
-      throw new Exception("Nothing Available");
+    // Get the first message from the queue
+    // Checking length doesn't seem to be a foolproof way to resolve this so wrapping in a try/catch
+    PubsubMessage message;
+    try {
+      message = messageList.getFirst();
+    } catch (Exception e) {
+      return null;
     }
 
     // Indicate the fetch Id is used
     this.fetchIdList.add(fetchClientId);
-
-    // Get the first message from the queue
-    PubsubMessage message = messageList.getFirst();
 
     // Remove the first message because it's been fetched by all parties
     if (this.fetchIdList.size() == fetchClientTotal) {

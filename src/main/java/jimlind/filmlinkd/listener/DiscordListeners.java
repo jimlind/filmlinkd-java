@@ -66,19 +66,13 @@ public class DiscordListeners extends ListenerAdapter {
           // Probably need to do the thing where I pass the scope to this method properly.
           // I don't like not being able to use "this.queue" or "this.messageUtility"
           public void run() {
-            // Try to grab something off the queue, it is expected that it will throw an
-            // exception if there isn't anything available or if all the shards aren't
-            // loaded.
-            String data;
-            try {
-              PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
-              data = result.getData().toStringUtf8();
-            } catch (Exception e) {
-              // Don't log or raise because expected. Yes this is bad, so it'll get fixed later
+            PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
+            if (result == null) {
               return;
             }
 
             // Translate to a message object
+            String data = result.getData().toStringUtf8();
             Message message = new GsonBuilder().create().fromJson(data, Message.class);
 
             // Attempt to get user based on Message

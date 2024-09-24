@@ -37,10 +37,12 @@ Achievements of this project right now.
 - Update the Java VM on docker image build
 - Write logs with additional data, not just a message
 - Write logging messages/data so existing dashboards will continue to function
+- Resolve crashing queue getter that has causes cascading failures
 
 Next.
 
-- Something weird happens and it locks up when things seem very normal
+- The pubsub seems to just stop or never start sometimes
+- Test what happens when I give a big backlog of the same entries to the service
 
 Open Larger Bugs.
 
