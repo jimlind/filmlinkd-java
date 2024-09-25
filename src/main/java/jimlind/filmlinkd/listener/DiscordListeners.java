@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import jimlind.filmlinkd.EntryCache;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.DiaryEntryEmbedFactory;
 import jimlind.filmlinkd.model.Message;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DiscordListeners extends ListenerAdapter {
+  @Autowired private EntryCache entryCache;
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
   @Autowired private PubSubQueue pubSubQueue;
@@ -74,6 +76,19 @@ public class DiscordListeners extends ListenerAdapter {
             // Translate to a message object
             String data = result.getData().toStringUtf8();
             Message message = new GsonBuilder().create().fromJson(data, Message.class);
+
+            // We are expecting multiple requests to post a diary entry so we maintain the one
+            // source of truth on the server that sends messages. We keep an in memory cache.
+            String key = message.entry.lid + '-' + shardId;
+            // If there isn't a specific channel to send to and key is in the cache skip it
+            if (message.channelId.isBlank() && entryCache.get(key)) {
+              return;
+            } else {
+              // Assume that write will succeed so write to cache. If it actually doesn't succeed
+              // then it'll get tried again some later time, but this is designed to limit
+              // duplicates from scrape events
+              entryCache.set(key);
+            }
 
             // Attempt to get user based on Message
             QueryDocumentSnapshot snapshot;
