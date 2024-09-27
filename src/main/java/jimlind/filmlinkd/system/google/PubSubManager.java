@@ -4,10 +4,12 @@ import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.Duration;
 import com.google.pubsub.v1.*;
 import com.google.pubsub.v1.Subscription.Builder;
 import jimlind.filmlinkd.Config;
+import jimlind.filmlinkd.listener.SubscriberListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import java.util.Objects;
 public class PubSubManager {
   @Autowired private Config config;
   @Autowired private PubSubQueue pubSubQueue;
+  @Autowired private SubscriberListener subscriberListener;
 
   private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
   private final Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
@@ -57,6 +60,8 @@ public class PubSubManager {
 
     // Wire the receiver to the subscription
     this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
+    subscriber.addListener(new SubscriberListener(), MoreExecutors.directExecutor());
+
     this.subscriber.startAsync().awaitRunning();
     log.info("Staring Listening for Messages on {}", subscriptionName);
   }
