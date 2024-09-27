@@ -39,10 +39,11 @@ Achievements of this project right now.
 - Write logging messages/data so existing dashboards will continue to function
 - Resolve crashing queue getter that has causes cascading failures
 - Test what happens when I give a big backlog of the same entries to the service
+- Log Pub/Sub actions and kill the program if the client dies
 
 Next.
 
-- The pubsub seems to just stop or never start sometimes
+- ???
 
 Open Larger Bugs.
 
