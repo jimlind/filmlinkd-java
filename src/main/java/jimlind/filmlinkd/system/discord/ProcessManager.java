@@ -1,7 +1,7 @@
 package jimlind.filmlinkd.system.discord;
 
 import jimlind.filmlinkd.Config;
-import jimlind.filmlinkd.listener.DiscordListeners;
+import jimlind.filmlinkd.listener.DiscordListener;
 import lombok.Getter;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProcessManager {
   @Autowired private Config config;
-  @Autowired private DiscordListeners discordListeners;
+  @Autowired private DiscordListener discordListeners;
   @Getter private ShardManager shardManager;
 
   public void connect() {

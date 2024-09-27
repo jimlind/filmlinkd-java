@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DiscordListeners extends ListenerAdapter {
+public class DiscordListener extends ListenerAdapter {
   @Autowired private EntryCache entryCache;
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
