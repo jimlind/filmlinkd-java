@@ -17,6 +17,7 @@ import jimlind.filmlinkd.system.google.PubSubQueue;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -53,6 +54,9 @@ public class DiscordListener extends ListenerAdapter {
     // whatever. This works well enough.
     boolean shardsLoggingIn = false;
     for (var entry : manager.getStatuses().entrySet()) {
+      // Intent here is that if any of the shards are logging in that week the queue locked
+      // But it doesn't really work
+      // I think If I have the pubSubQueue actually worked then I could delete this lock
       if (entry.getValue() == JDA.Status.LOGGING_IN) {
         shardsLoggingIn = true;
         break;
@@ -68,7 +72,6 @@ public class DiscordListener extends ListenerAdapter {
           // Probably need to do the thing where I pass the scope to this method properly.
           // I don't like not being able to use "this.queue" or "this.messageUtility"
           public void run() {
-            log.info("Loop Executing");
             PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
             if (result == null) {
               return;
@@ -119,11 +122,14 @@ public class DiscordListener extends ListenerAdapter {
                   jda.getChannelById(GuildMessageChannel.class, channelId);
 
               if (channel == null) {
-                log.atWarn()
-                    .setMessage("Unable to Find Channel")
-                    .addKeyValue("channelId", channelId)
-                    .addKeyValue("message", message)
-                    .log();
+                Channel anyChannel = jda.getChannelById(Channel.class, channelId);
+                if (anyChannel != null) {
+                  log.atWarn()
+                      .setMessage("Found None Messaging Channel")
+                      .addKeyValue("channelId", channelId)
+                      .addKeyValue("channelType", anyChannel.getClass().toString())
+                      .log();
+                }
                 continue;
               }
 

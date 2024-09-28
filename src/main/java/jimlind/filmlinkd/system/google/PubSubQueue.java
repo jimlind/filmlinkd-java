@@ -1,12 +1,14 @@
 package jimlind.filmlinkd.system.google;
 
 import com.google.pubsub.v1.PubsubMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 @Component
+@Slf4j
 // Queue exists so that I can rate limit the amount of processing that happens.
 // If we let every PubSub event trigger some logic it can take over the
 // CPU really quickly.
@@ -26,6 +28,10 @@ public class PubSubQueue {
   public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal) {
     // Check if the specific ID was used for fetching and set it otherwise
     if (this.fetchIdList.contains(fetchClientId)) {
+      log.atInfo()
+          .setMessage("Client ID Already Logged")
+          .addKeyValue("clientIdList", this.fetchIdList)
+          .log();
       return null;
     }
 
