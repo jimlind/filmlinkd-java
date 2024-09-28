@@ -68,6 +68,7 @@ public class DiscordListener extends ListenerAdapter {
           // Probably need to do the thing where I pass the scope to this method properly.
           // I don't like not being able to use "this.queue" or "this.messageUtility"
           public void run() {
+            log.info("Loop Executing");
             PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
             if (result == null) {
               return;
