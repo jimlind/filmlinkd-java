@@ -145,10 +145,22 @@ public class DiscordListener extends ListenerAdapter {
                 continue;
               }
 
-              log.info("Sending Message for Shard {}", shardId);
-              channel
-                  .sendMessageEmbeds(embedList)
-                  .queue(m -> sendSuccess(m, message, channel), m -> sendFailure(message, channel));
+              log.info("Start Sending Message for Shard {}", shardId);
+              try {
+                channel
+                    .sendMessageEmbeds(embedList)
+                    .queue(
+                        m -> sendSuccess(m, message, channel), m -> sendFailure(message, channel));
+              } catch (Exception e) {
+                log.atError()
+                    .setMessage("Send MessageEmbeds Failed")
+                    .addKeyValue("shard", shardId)
+                    .addKeyValue("message", message)
+                    .addKeyValue("channel", channelId)
+                    .addKeyValue("exception", e.toString())
+                    .log();
+              }
+              log.info("Done Sending Message for Shard {}", shardId);
             }
           }
         };

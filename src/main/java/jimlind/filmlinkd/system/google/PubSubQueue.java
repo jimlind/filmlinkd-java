@@ -26,7 +26,6 @@ public class PubSubQueue {
   }
 
   public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal) {
-    log.info("Checking the Queue for Client {}", fetchClientId);
     // Check if the specific ID was used for fetching and set it otherwise
     if (this.fetchIdList.contains(fetchClientId)) {
       log.atInfo()
