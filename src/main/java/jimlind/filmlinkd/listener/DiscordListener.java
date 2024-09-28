@@ -145,6 +145,7 @@ public class DiscordListener extends ListenerAdapter {
                 continue;
               }
 
+              log.info("Sending Message for Shard {}", shardId);
               channel
                   .sendMessageEmbeds(embedList)
                   .queue(m -> sendSuccess(m, message, channel), m -> sendFailure(message, channel));

@@ -55,7 +55,6 @@ public class PubSubManager {
     MessageReceiver receiver =
         (PubsubMessage message, AckReplyConsumer consumer) -> {
           this.pubSubQueue.set(message);
-          log.atInfo().setMessage("Acknowledging Message").addKeyValue("message", message).log();
           consumer.ack();
         };
 
