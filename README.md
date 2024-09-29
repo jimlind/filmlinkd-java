@@ -40,10 +40,13 @@ Achievements of this project right now.
 - Resolve crashing queue getter that has causes cascading failures
 - Test what happens when I give a big backlog of the same entries to the service
 - Log Pub/Sub actions and kill the program if the client dies
+- Remove channel not found logs
+- Fixed problem with messages without images
 
 Next.
 
-- ???
+- Permissions issues are actually causing the problems
+- Started sending messages before all discord client connected messages sent
 
 Open Larger Bugs.
 
