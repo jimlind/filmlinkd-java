@@ -85,7 +85,10 @@ public class DiaryEntryEmbedFactory {
       embedBuilder.setFooter(user.footer.text, user.footer.icon);
     }
 
-    embedBuilder.setThumbnail(message.entry.image);
+    // If there is an image then include it
+    if (!message.entry.image.isBlank()) {
+      embedBuilder.setThumbnail(message.entry.image);
+    }
     embedBuilder.setColor(new Color(0xa700bd));
 
     ArrayList<MessageEmbed> collection = new ArrayList<MessageEmbed>();
