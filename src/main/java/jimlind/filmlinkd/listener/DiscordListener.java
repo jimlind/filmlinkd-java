@@ -16,6 +16,8 @@ import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.google.PubSubQueue;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -135,6 +137,15 @@ public class DiscordListener extends ListenerAdapter {
 
               // Not finding a channel is extremely normal when running shards so we skip it
               if (channel == null) {
+                continue;
+              }
+
+              // Not having proper permissions is more normal than it should be so we skip it
+              Member self = channel.getGuild().getSelfMember();
+              if (!self.hasPermission(
+                  Permission.VIEW_CHANNEL,
+                  Permission.MESSAGE_SEND,
+                  Permission.MESSAGE_EMBED_LINKS)) {
                 continue;
               }
 
