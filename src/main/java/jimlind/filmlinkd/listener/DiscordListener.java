@@ -17,7 +17,6 @@ import jimlind.filmlinkd.system.google.PubSubQueue;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -47,7 +46,7 @@ public class DiscordListener extends ListenerAdapter {
       return;
     }
 
-    log.info("Discord Client Logged In on {} Servers", manager.getGuildCache().size());
+    log.info("Discord Client Logged In on {} Servers", jda.getGuildCache().size());
     int shardId = jda.getShardInfo().getShardId();
 
     // There is surely a cleaner way to do this in a filter or something but
@@ -117,31 +116,25 @@ public class DiscordListener extends ListenerAdapter {
               return;
             }
 
+            ArrayList<MessageEmbed> embedList;
+            try {
+              embedList = diaryEntryEmbedFactory.create(message, user);
+            } catch (Exception e) {
+              System.out.println(e);
+              log.atError()
+                  .setMessage("Creating Diary Entry Embed Failed")
+                  .addKeyValue("message", message)
+                  .addKeyValue("user", user)
+                  .log();
+              return;
+            }
+
             for (String channelId : getChannelListFromMessage(message)) {
               GuildMessageChannel channel =
                   jda.getChannelById(GuildMessageChannel.class, channelId);
 
+              // Not finding a channel is extremely normal when running shards so we skip it
               if (channel == null) {
-                Channel anyChannel = jda.getChannelById(Channel.class, channelId);
-                if (anyChannel != null) {
-                  log.atWarn()
-                      .setMessage("Found None Messaging Channel")
-                      .addKeyValue("channelId", channelId)
-                      .addKeyValue("channelType", anyChannel.getClass().toString())
-                      .log();
-                }
-                continue;
-              }
-
-              ArrayList<MessageEmbed> embedList;
-              try {
-                embedList = diaryEntryEmbedFactory.create(message, user);
-              } catch (Exception e) {
-                log.atWarn()
-                    .setMessage("Creating Diary Entry Embed Failed")
-                    .addKeyValue("message", message)
-                    .addKeyValue("user", user)
-                    .log();
                 continue;
               }
 
