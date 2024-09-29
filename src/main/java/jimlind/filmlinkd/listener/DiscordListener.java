@@ -138,7 +138,6 @@ public class DiscordListener extends ListenerAdapter {
                 continue;
               }
 
-              log.info("Start Sending Message for Shard {}", shardId);
               try {
                 channel
                     .sendMessageEmbeds(embedList)
@@ -153,7 +152,6 @@ public class DiscordListener extends ListenerAdapter {
                     .addKeyValue("exception", e.toString())
                     .log();
               }
-              log.info("Done Sending Message for Shard {}", shardId);
             }
           }
         };
