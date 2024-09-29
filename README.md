@@ -42,11 +42,11 @@ Achievements of this project right now.
 - Log Pub/Sub actions and kill the program if the client dies
 - Remove channel not found logs
 - Fixed problem with messages without images
+- Check permissions before trying to send
 
 Next.
 
-- Permissions issues are actually causing the problems
-- Started sending messages before all discord client connected messages sent
+- Started sending messages before all discord client connected messages sent, maybe delete the queue lock
 
 Open Larger Bugs.
 
