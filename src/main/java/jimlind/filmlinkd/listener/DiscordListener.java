@@ -128,6 +128,7 @@ public class DiscordListener extends ListenerAdapter {
               // Not having proper permissions is more normal than it should be so we skip it
               Member self = channel.getGuild().getSelfMember();
               if (!self.hasPermission(
+                  channel,
                   Permission.VIEW_CHANNEL,
                   Permission.MESSAGE_SEND,
                   Permission.MESSAGE_EMBED_LINKS)) {

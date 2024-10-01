@@ -44,6 +44,7 @@ Achievements of this project right now.
 - Fixed problem with messages without images
 - Check permissions before trying to send
 - Delete the Queue Lock
+- Check permissions on channel not guild
 
 Next.
 
