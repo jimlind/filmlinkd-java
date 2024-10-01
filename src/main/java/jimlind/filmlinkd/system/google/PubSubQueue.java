@@ -26,10 +26,6 @@ public class PubSubQueue {
   public synchronized PubsubMessage get(Integer fetchClientId, Integer fetchClientTotal) {
     // Check if the specific ID was used for fetching and set it otherwise
     if (this.fetchIdList.contains(fetchClientId)) {
-      log.atInfo()
-          .setMessage("Client ID Already Logged")
-          .addKeyValue("clientIdList", this.fetchIdList)
-          .log();
       return null;
     }
 
