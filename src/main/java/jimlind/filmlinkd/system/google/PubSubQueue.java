@@ -16,8 +16,6 @@ import java.util.LinkedList;
 // If there was some kind of throttled events in Spring I wouldn't need to do
 // this. I should go look that up and see if it does exist.
 public class PubSubQueue {
-  public Boolean writeOnlyLock = true;
-
   private final LinkedList<PubsubMessage> messageList = new LinkedList<PubsubMessage>();
   private final ArrayList<Integer> fetchIdList = new ArrayList<Integer>();
 
@@ -32,11 +30,6 @@ public class PubSubQueue {
           .setMessage("Client ID Already Logged")
           .addKeyValue("clientIdList", this.fetchIdList)
           .log();
-      return null;
-    }
-
-    // Don't allow reading until all fetching clients have connected
-    if (writeOnlyLock) {
       return null;
     }
 

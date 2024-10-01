@@ -51,21 +51,6 @@ public class DiscordListener extends ListenerAdapter {
     log.info("Discord Client Logged In on {} Servers", jda.getGuildCache().size());
     int shardId = jda.getShardInfo().getShardId();
 
-    // There is surely a cleaner way to do this in a filter or something but
-    // whatever. This works well enough.
-    boolean shardsLoggingIn = false;
-    for (var entry : manager.getStatuses().entrySet()) {
-      // Intent here is that if any of the shards are logging in that week the queue locked
-      // But it doesn't really work
-      // I think If I have the pubSubQueue actually worked then I could delete this lock
-      if (entry.getValue() == JDA.Status.LOGGING_IN) {
-        shardsLoggingIn = true;
-        break;
-      }
-    }
-    // When shards are logging in (true) the write only lock stays on (true)
-    pubSubQueue.writeOnlyLock = shardsLoggingIn;
-
     Timer timer = new Timer();
     TimerTask task =
         new TimerTask() {

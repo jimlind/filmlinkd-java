@@ -43,10 +43,11 @@ Achievements of this project right now.
 - Remove channel not found logs
 - Fixed problem with messages without images
 - Check permissions before trying to send
+- Delete the Queue Lock
 
 Next.
 
-- Started sending messages before all discord client connected messages sent, maybe delete the queue lock
+- ???
 
 Open Larger Bugs.
 
