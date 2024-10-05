@@ -1,7 +1,5 @@
 package jimlind.filmlinkd.system.google;
 
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
-import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -10,6 +8,7 @@ import com.google.pubsub.v1.*;
 import com.google.pubsub.v1.Subscription.Builder;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.listener.SubscriberListener;
+import jimlind.filmlinkd.system.MessageReciever;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ import java.util.Objects;
 @Slf4j
 public class PubSubManager {
   @Autowired private Config config;
+  @Autowired private MessageReciever messageReciever;
   @Autowired private PubSubQueue pubSubQueue;
   @Autowired private SubscriberListener subscriberListener;
 
@@ -48,18 +48,9 @@ public class PubSubManager {
       return;
     }
 
-    // Create an asynchronous message receiver
-    // This writes to a queue so that I can rate limit the amount of processing that
-    // happens. If we let every PubSub event trigger some logic it can take over the
-    // CPU really quickly.
-    MessageReceiver receiver =
-        (PubsubMessage message, AckReplyConsumer consumer) -> {
-          this.pubSubQueue.set(message);
-          consumer.ack();
-        };
-
-    // Wire the receiver to the subscription
-    this.subscriber = Subscriber.newBuilder(subscriptionName.toString(), receiver).build();
+    // Build a subscriber wired up to a message receivers and event listeners
+    this.subscriber =
+        Subscriber.newBuilder(subscriptionName.toString(), this.messageReciever).build();
     subscriber.addListener(new SubscriberListener(), MoreExecutors.directExecutor());
 
     this.subscriber.startAsync().awaitRunning();
