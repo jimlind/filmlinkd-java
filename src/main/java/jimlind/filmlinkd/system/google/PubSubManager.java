@@ -20,7 +20,6 @@ import java.util.Objects;
 public class PubSubManager {
   @Autowired private Config config;
   @Autowired private MessageReciever messageReciever;
-  @Autowired private PubSubQueue pubSubQueue;
   @Autowired private SubscriberListener subscriberListener;
 
   private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
