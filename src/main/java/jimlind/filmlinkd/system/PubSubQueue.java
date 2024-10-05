@@ -1,4 +1,4 @@
-package jimlind.filmlinkd.system.google;
+package jimlind.filmlinkd.system;
 
 import com.google.pubsub.v1.PubsubMessage;
 import lombok.extern.slf4j.Slf4j;
