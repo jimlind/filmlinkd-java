@@ -1,13 +1,12 @@
 package jimlind.filmlinkd.system;
 
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
-import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.pubsub.v1.PubsubMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageReciever implements MessageReceiver {
+public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiver {
   @Autowired private PubSubQueue pubSubQueue;
 
   @Override

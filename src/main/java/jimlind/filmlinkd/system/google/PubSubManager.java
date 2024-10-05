@@ -8,7 +8,7 @@ import com.google.pubsub.v1.*;
 import com.google.pubsub.v1.Subscription.Builder;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.listener.SubscriberListener;
-import jimlind.filmlinkd.system.MessageReciever;
+import jimlind.filmlinkd.system.MessageReceiver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 public class PubSubManager {
   @Autowired private Config config;
-  @Autowired private MessageReciever messageReciever;
+  @Autowired private MessageReceiver messageReceiver;
   @Autowired private SubscriberListener subscriberListener;
 
   private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
@@ -49,7 +49,7 @@ public class PubSubManager {
 
     // Build a subscriber wired up to a message receivers and event listeners
     this.subscriber =
-        Subscriber.newBuilder(subscriptionName.toString(), this.messageReciever).build();
+        Subscriber.newBuilder(subscriptionName.toString(), this.messageReceiver).build();
     subscriber.addListener(new SubscriberListener(), MoreExecutors.directExecutor());
 
     this.subscriber.startAsync().awaitRunning();
