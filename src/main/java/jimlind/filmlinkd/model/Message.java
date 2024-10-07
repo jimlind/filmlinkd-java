@@ -24,4 +24,8 @@ public class Message {
     public Long updatedDate;
     public String publishSource;
   }
+
+  public boolean hasChannelOverride() {
+    return !this.channelId.isBlank();
+  }
 }
