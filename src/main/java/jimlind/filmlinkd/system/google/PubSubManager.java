@@ -50,7 +50,7 @@ public class PubSubManager {
     // Build a subscriber wired up to a message receivers and event listeners
     this.subscriber =
         Subscriber.newBuilder(subscriptionName.toString(), this.messageReceiver).build();
-    subscriber.addListener(new SubscriberListener(), MoreExecutors.directExecutor());
+    subscriber.addListener(this.subscriberListener, MoreExecutors.directExecutor());
 
     this.subscriber.startAsync().awaitRunning();
     log.info("Staring Listening for Messages on {}", subscriptionName);
