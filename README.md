@@ -48,7 +48,8 @@ Achievements of this project right now.
 
 Next.
 
-- ???
+- Something is a little silly because it is reposting reviews, we need a centralized cache/filter system
+- Add the logic around one-off channel posts as well
 
 Open Larger Bugs.
 
