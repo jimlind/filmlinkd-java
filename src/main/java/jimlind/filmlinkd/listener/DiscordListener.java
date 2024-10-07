@@ -1,6 +1,5 @@
 package jimlind.filmlinkd.listener;
 
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -70,6 +69,7 @@ public class DiscordListener extends ListenerAdapter {
             // source of truth on the server that sends messages. We keep an in memory cache.
             String key = message.entry.lid + '-' + shardId;
             // If there isn't a specific channel to send to and key is in the cache skip it
+            // TODO: Use the new has override on the message
             if (message.channelId.isBlank() && entryCache.get(key)) {
               return;
             } else {
@@ -91,7 +91,7 @@ public class DiscordListener extends ListenerAdapter {
               return;
             }
 
-            for (String channelId : getChannelListFromMessage(message)) {
+            for (String channelId : getChannelListFromScrapeResult(result)) {
               GuildMessageChannel channel =
                   jda.getChannelById(GuildMessageChannel.class, channelId);
 
@@ -170,17 +170,19 @@ public class DiscordListener extends ListenerAdapter {
         .log();
   }
 
-  private ArrayList<String> getChannelListFromMessage(Message message) {
+  private ArrayList<String> getChannelListFromScrapeResult(ScrapedResult scrapedResult) {
+    // TODO: If the entry in the scraped result is newer than user's previous then send to the
+    // complete channel list
     ArrayList<String> channelList = new ArrayList<String>();
-    if (!message.channelId.isBlank()) {
-      channelList.add(message.channelId);
+    String channelId = scrapedResult.message.channelId;
+    // TODO: Use new hasOverride on the message
+    if (!channelId.isBlank()) {
+      channelList.add(channelId);
       return channelList;
     }
 
     try {
-      QueryDocumentSnapshot document = this.firestoreManager.getUserDocument(message.entry.userLid);
-      User user = this.userFactory.createFromSnapshot(document);
-      return user.getChannelList();
+      return scrapedResult.user.getChannelList();
     } catch (Exception e) {
       log.info("Unable to fetch channel list from user", e);
     }
