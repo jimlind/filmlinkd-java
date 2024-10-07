@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiver {
-  @Autowired private PubSubQueue pubSubQueue;
+  @Autowired private ScrapedResultQueue scrapedResultQueue;
 
   @Override
   // This writes to a queue so that I can rate limit the amount of processing that
   // happens. If we let every PubSub event trigger some logic it can take over the
   // CPU really quickly.
   public void receiveMessage(PubsubMessage pubsubMessage, AckReplyConsumer ackReplyConsumer) {
-    this.pubSubQueue.set(pubsubMessage);
+    this.scrapedResultQueue.set(pubsubMessage);
     ackReplyConsumer.ack();
   }
 }

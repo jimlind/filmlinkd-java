@@ -1,8 +1,6 @@
 package jimlind.filmlinkd.listener;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.gson.GsonBuilder;
-import com.google.pubsub.v1.PubsubMessage;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -11,9 +9,10 @@ import jimlind.filmlinkd.EntryCache;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.DiaryEntryEmbedFactory;
 import jimlind.filmlinkd.model.Message;
+import jimlind.filmlinkd.model.ScrapedResult;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.ScrapedResultQueue;
 import jimlind.filmlinkd.system.google.FirestoreManager;
-import jimlind.filmlinkd.system.google.PubSubQueue;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -32,10 +31,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DiscordListener extends ListenerAdapter {
+  @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
   @Autowired private EntryCache entryCache;
   @Autowired private FirestoreManager firestoreManager;
-  @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
-  @Autowired private PubSubQueue pubSubQueue;
+  @Autowired private ScrapedResultQueue scrapedResultQueue;
   @Autowired private UserFactory userFactory;
 
   @Override
@@ -58,15 +57,15 @@ public class DiscordListener extends ListenerAdapter {
           // Probably need to do the thing where I pass the scope to this method properly.
           // I don't like not being able to use "this.queue" or "this.messageUtility"
           public void run() {
-            PubsubMessage result = pubSubQueue.get(shardId, manager.getShardsTotal());
+            ScrapedResult result = scrapedResultQueue.get(shardId, manager.getShardsTotal());
             if (result == null) {
               return;
             }
 
-            // Translate to a message object
-            String data = result.getData().toStringUtf8();
-            Message message = new GsonBuilder().create().fromJson(data, Message.class);
+            Message message = result.message;
+            User user = result.user;
 
+            // TODO: Move this cache to message receiver and remove the shard id
             // We are expecting multiple requests to post a diary entry so we maintain the one
             // source of truth on the server that sends messages. We keep an in memory cache.
             String key = message.entry.lid + '-' + shardId;
@@ -80,34 +79,10 @@ public class DiscordListener extends ListenerAdapter {
               entryCache.set(key);
             }
 
-            // Attempt to get user based on Message
-            QueryDocumentSnapshot snapshot;
-            try {
-              snapshot = firestoreManager.getUserDocument(message.entry.userLid);
-            } catch (Exception e) {
-              log.atWarn()
-                  .setMessage("Invalid User Passed in PubSub Message")
-                  .addKeyValue("message", message)
-                  .log();
-              return;
-            }
-
-            // Translate to user object
-            User user = userFactory.createFromSnapshot(snapshot);
-            if (user == null) {
-              log.atWarn()
-                  .setMessage("Unable to Create User from Snapshot")
-                  .addKeyValue("message", message)
-                  .addKeyValue("snapshot", snapshot)
-                  .log();
-              return;
-            }
-
             ArrayList<MessageEmbed> embedList;
             try {
               embedList = diaryEntryEmbedFactory.create(message, user);
             } catch (Exception e) {
-              System.out.println(e);
               log.atError()
                   .setMessage("Creating Diary Entry Embed Failed")
                   .addKeyValue("message", message)
