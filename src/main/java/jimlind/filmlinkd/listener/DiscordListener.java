@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import jimlind.filmlinkd.EntryCache;
-import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.DiaryEntryEmbedFactory;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.ScrapedResult;
@@ -31,10 +29,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DiscordListener extends ListenerAdapter {
   @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
-  @Autowired private EntryCache entryCache;
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private ScrapedResultQueue scrapedResultQueue;
-  @Autowired private UserFactory userFactory;
 
   @Override
   public void onReady(ReadyEvent e) {
@@ -64,21 +60,6 @@ public class DiscordListener extends ListenerAdapter {
             Message message = result.message;
             User user = result.user;
 
-            // TODO: Move this cache to message receiver and remove the shard id
-            // We are expecting multiple requests to post a diary entry so we maintain the one
-            // source of truth on the server that sends messages. We keep an in memory cache.
-            String key = message.entry.lid + '-' + shardId;
-            // If there isn't a specific channel to send to and key is in the cache skip it
-            // TODO: Use the new has override on the message
-            if (message.channelId.isBlank() && entryCache.get(key)) {
-              return;
-            } else {
-              // Assume that write will succeed so write to cache. If it actually doesn't succeed
-              // then it'll get tried again some later time, but this is designed to limit
-              // duplicates from scrape events
-              entryCache.set(key);
-            }
-
             ArrayList<MessageEmbed> embedList;
             try {
               embedList = diaryEntryEmbedFactory.create(message, user);
@@ -95,12 +76,14 @@ public class DiscordListener extends ListenerAdapter {
               GuildMessageChannel channel =
                   jda.getChannelById(GuildMessageChannel.class, channelId);
 
-              // Not finding a channel is extremely normal when running shards so we skip it
+              // Not finding a channel is extremely normal when running shards so we ignore the
+              // possible issue and don't log anything
               if (channel == null) {
                 continue;
               }
 
-              // Not having proper permissions is more normal than it should be so we skip it
+              // Not having proper permissions is more normal than it should be so we ignore the
+              // possible issue and don't log anything
               Member self = channel.getGuild().getSelfMember();
               if (!self.hasPermission(
                   channel,

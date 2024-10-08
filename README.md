@@ -46,11 +46,12 @@ Achievements of this project right now.
 - Delete the Queue Lock
 - Check permissions on channel not guild
 - Change from only checking previous lid to checking the previous lid list
+- Centralize the new entry filtering
+- Move the existing cache to message receiver
 
 Next.
 
 - Something is a little silly because it is reposting reviews, we need a centralized cache/filter system
-- Move the existing cache to message receiver
 - Pass user directly to the sendSuccess to avoid another database look up
 - Add the logic around one-off channel posts as well (the channel overrides should post everywhere if new)
 
