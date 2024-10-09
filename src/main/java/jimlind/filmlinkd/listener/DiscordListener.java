@@ -157,10 +157,9 @@ public class DiscordListener extends ListenerAdapter {
     // TODO: If the entry in the scraped result is newer than user's previous then send to the
     // complete channel list
     ArrayList<String> channelList = new ArrayList<String>();
-    String channelId = scrapedResult.message.channelId;
-    // TODO: Use new hasOverride on the message
-    if (!channelId.isBlank()) {
-      channelList.add(channelId);
+    Message message = scrapedResult.message;
+    if (message.hasChannelOverride()) {
+      channelList.add(message.channelId);
       return channelList;
     }
 
