@@ -71,7 +71,7 @@ public class FirestoreManager {
 
       // The scraping process uses the previous lid as it's source of truth to determine which
       // entries are new. Maybe that should be changed eventually.
-      user.previous.lid = user.previous.list.get(user.previous.list.size() - 1);
+      user.previous.lid = user.getMostRecentPrevious();
 
       // This data is only used if I'm trying to debug publishing issues
       user.updated = Instant.now().toEpochMilli();

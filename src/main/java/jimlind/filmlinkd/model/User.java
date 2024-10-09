@@ -52,6 +52,10 @@ public class User {
     return channelListResults;
   }
 
+  public String getMostRecentPrevious() {
+    return previous.list.get(previous.list.size() - 1);
+  }
+
   public Map<String, Object> toMap() {
     Gson gson = new Gson();
     String json = gson.toJson(this);
