@@ -97,7 +97,7 @@ public class DiscordListener extends ListenerAdapter {
                 channel
                     .sendMessageEmbeds(embedList)
                     .queue(
-                        m -> sendSuccess(m, message, channel), m -> sendFailure(message, channel));
+                        m -> sendSuccess(m, result, channel), m -> sendFailure(message, channel));
               } catch (Exception e) {
                 log.atError()
                     .setMessage("Send MessageEmbeds Failed")
@@ -116,9 +116,9 @@ public class DiscordListener extends ListenerAdapter {
 
   private void sendSuccess(
       net.dv8tion.jda.api.entities.Message jdaMessage,
-      Message message,
+      ScrapedResult scrapedResult,
       GuildMessageChannel channel) {
-    Message.Entry entry = message.entry;
+    Message.Entry entry = scrapedResult.message.entry;
 
     // Log delay time between now and published time
     log.atInfo()
@@ -131,17 +131,23 @@ public class DiscordListener extends ListenerAdapter {
     log.atInfo()
         .setMessage("Successfully Sent Message")
         .addKeyValue("channelId", channel.getId())
-        .addKeyValue("message", message)
+        .addKeyValue("message", scrapedResult.message)
         .addKeyValue("channel", channel)
         .addKeyValue("jdaMessage", jdaMessage)
         .log();
 
-    boolean updateSuccess =
-        firestoreManager.updateUserPrevious(
-            entry.userLid, entry.lid, entry.publishedDate, entry.link);
+    // If the entry doesn't exist in the users previous entry list write it
+    if (!scrapedResult.user.previous.list.contains(entry.lid)) {
+      boolean updateSuccess =
+          firestoreManager.updateUserPrevious(
+              entry.userLid, entry.lid, entry.publishedDate, entry.link);
 
-    if (!updateSuccess) {
-      log.atError().setMessage("Entry did not Update").addKeyValue("entry", message.entry).log();
+      if (!updateSuccess) {
+        log.atError()
+            .setMessage("Entry did not Update")
+            .addKeyValue("entry", scrapedResult.message.entry)
+            .log();
+      }
     }
   }
 

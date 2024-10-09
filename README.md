@@ -48,10 +48,10 @@ Achievements of this project right now.
 - Change from only checking previous lid to checking the previous lid list
 - Centralize the new entry filtering
 - Move the existing cache to message receiver
+- Avoid another lookup before sendSuccess
 
 Next.
 
-- Pass user directly to the sendSuccess to avoid another database look up
 - Add/test the logic around one-off channel posts as well (the channel overrides should post everywhere if new)
 
 Open Larger Bugs.

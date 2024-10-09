@@ -61,20 +61,19 @@ public class FirestoreManager {
     ArrayList<String> previousList = user.previous.list;
 
     try {
-      if (!previousList.contains(diaryLID)) {
-        // The previous list should be considered the primary source of truth
-        user.previous.list = LidComparer.buildMostRecentList(previousList, diaryLID, 10);
+      // The previous list should be considered the primary source of truth
+      user.previous.list = LidComparer.buildMostRecentList(previousList, diaryLID, 10);
 
-        // The scraping process uses the previous lid as it's source of truth to determine which
-        // entries are new. Maybe that should be changed eventually.
-        user.previous.lid = user.previous.list.get(user.previous.list.size() - 1);
+      // The scraping process uses the previous lid as it's source of truth to determine which
+      // entries are new. Maybe that should be changed eventually.
+      user.previous.lid = user.previous.list.get(user.previous.list.size() - 1);
 
-        // This data is only used if I'm trying to debug publishing issues
-        user.updated = Instant.now().toEpochMilli();
-        user.previous.published = diaryPublishedDate;
-        user.previous.uri = diaryURI;
-      }
+      // This data is only used if I'm trying to debug publishing issues
+      user.updated = Instant.now().toEpochMilli();
+      user.previous.published = diaryPublishedDate;
+      user.previous.uri = diaryURI;
 
+      // Preform the update
       snapshot.getReference().update(user.toMap());
     } catch (Exception e) {
       log.atError()
