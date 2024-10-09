@@ -60,6 +60,11 @@ public class FirestoreManager {
     User user = this.userFactory.createFromSnapshot(snapshot);
     ArrayList<String> previousList = user.previous.list;
 
+    // Nothing to update. Return `true` as if the action succeeded.
+    if (previousList.contains(diaryLID)) {
+      return true;
+    }
+
     try {
       // The previous list should be considered the primary source of truth
       user.previous.list = LidComparer.buildMostRecentList(previousList, diaryLID, 10);
