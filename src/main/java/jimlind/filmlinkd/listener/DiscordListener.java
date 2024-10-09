@@ -10,6 +10,7 @@ import jimlind.filmlinkd.model.ScrapedResult;
 import jimlind.filmlinkd.model.User;
 import jimlind.filmlinkd.system.ScrapedResultQueue;
 import jimlind.filmlinkd.system.google.FirestoreManager;
+import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -160,11 +161,12 @@ public class DiscordListener extends ListenerAdapter {
   }
 
   private ArrayList<String> getChannelListFromScrapeResult(ScrapedResult scrapedResult) {
-    // TODO: If the entry in the scraped result is newer than user's previous then send to the
-    // complete channel list
     ArrayList<String> channelList = new ArrayList<String>();
     Message message = scrapedResult.message;
-    if (message.hasChannelOverride()) {
+    String previous = scrapedResult.user.getMostRecentPrevious();
+    boolean isNewerThanKnown = LidComparer.compare(previous, scrapedResult.message.entry.lid) < 0;
+
+    if (message.hasChannelOverride() && !isNewerThanKnown) {
       channelList.add(message.channelId);
       return channelList;
     }

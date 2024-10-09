@@ -49,10 +49,11 @@ Achievements of this project right now.
 - Centralize the new entry filtering
 - Move the existing cache to message receiver
 - Avoid another lookup before sendSuccess
+- Resolve issue where channel overrides should be ignored
 
 Next.
 
-- Add/test the logic around one-off channel posts as well (the channel overrides should post everywhere if new)
+- ???
 
 Open Larger Bugs.
 
