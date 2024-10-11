@@ -9,6 +9,7 @@ import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.ScrapedResult;
 import jimlind.filmlinkd.model.User;
 import jimlind.filmlinkd.system.ScrapedResultQueue;
+import jimlind.filmlinkd.system.discord.SlashCommandManager;
 import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +18,11 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,7 @@ public class DiscordListener extends ListenerAdapter {
   @Autowired private DiaryEntryEmbedFactory diaryEntryEmbedFactory;
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private ScrapedResultQueue scrapedResultQueue;
+  @Autowired private SlashCommandManager slashCommandManager;
 
   @Override
   public void onReady(ReadyEvent e) {
@@ -113,6 +117,12 @@ public class DiscordListener extends ListenerAdapter {
         };
     // I can probably make this a lot shorter for actual use
     timer.scheduleAtFixedRate(task, 0, 1000);
+  }
+
+  @Override
+  public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    boolean result = this.slashCommandManager.process(event);
+    System.out.println(result);
   }
 
   private void sendSuccess(
