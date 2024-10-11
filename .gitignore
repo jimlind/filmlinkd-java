@@ -18,3 +18,4 @@ buildNumber.properties
 .gcp-key.json
 .DS_Store
 /.idea
+/.vscode/
