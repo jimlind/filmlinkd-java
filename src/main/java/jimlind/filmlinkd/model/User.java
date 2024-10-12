@@ -14,7 +14,7 @@ public class User {
   public String displayName;
   public String image;
   public String letterboxdId;
-  public String lid;
+  @Deprecated public String lid;
   public long updated;
   public String userName;
 
@@ -27,7 +27,7 @@ public class User {
   }
 
   public static class Previous {
-    public String id;
+    @Deprecated public String id;
     public String lid;
     public ArrayList<String> list;
     public Long published;
