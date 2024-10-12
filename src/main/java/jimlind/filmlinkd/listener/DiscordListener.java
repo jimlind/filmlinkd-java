@@ -121,8 +121,18 @@ public class DiscordListener extends ListenerAdapter {
 
   @Override
   public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-    boolean result = this.slashCommandManager.process(event);
-    System.out.println(result);
+    boolean processSuccess = this.slashCommandManager.process(event);
+    if (processSuccess) {
+      log.atInfo()
+          .setMessage("Successfully processed slash command.")
+          .addKeyValue("event", event.getName())
+          .log();
+    } else {
+      log.atInfo()
+          .setMessage("Failed to process slash command.")
+          .addKeyValue("event", event.getName())
+          .log();
+    }
   }
 
   private void sendSuccess(
