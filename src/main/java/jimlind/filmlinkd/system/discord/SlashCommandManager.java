@@ -57,7 +57,7 @@ public class SlashCommandManager {
   public boolean process(SlashCommandInteractionEvent event) {
     Handler handler = this.handlerMap.get(event.getName());
     if (handler == null) {
-      event.reply("Error Type A").queue();
+      event.reply("Nothing available to handle event request.").queue();
       return false;
     }
     handler.handleEvent(event);
