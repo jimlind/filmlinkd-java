@@ -18,6 +18,10 @@ public class LidComparer {
    * lowest to highest [0-9][a-z][A-Z] So we need to swap cases before doing a comparison
    */
   public static int compare(String letterboxdIdA, String letterboxdIdB) {
+    if (letterboxdIdA == null || letterboxdIdB == null) {
+      return 0;
+    }
+
     if (letterboxdIdA.length() != letterboxdIdB.length()) {
       return letterboxdIdA.length() - letterboxdIdB.length();
     }
