@@ -1,6 +1,7 @@
 package jimlind.filmlinkd.system.google;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.AggregateQuerySnapshot;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.FirestoreOptions.Builder;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -41,6 +42,16 @@ public class FirestoreManager {
     ApiFuture<QuerySnapshot> query =
         this.db.collection(collectionId).whereEqualTo("letterboxdId", userLID).limit(1).get();
     return query.get().getDocuments().get(0);
+  }
+
+  public long getUserCount() {
+    String collectionId = this.config.getFirestoreCollectionId();
+    ApiFuture<AggregateQuerySnapshot> query = this.db.collection(collectionId).count().get();
+    try {
+      return query.get().getCount();
+    } catch (Exception e) {
+      return 0;
+    }
   }
 
   public boolean updateUserPrevious(
