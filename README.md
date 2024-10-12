@@ -50,10 +50,21 @@ Achievements of this project right now.
 - Move the existing cache to message receiver
 - Avoid another lookup before sendSuccess
 - Resolve issue where channel overrides should be ignored
+- Command for /help
 
 Next.
 
-- ???
+- follow
+- unfollow
+- following
+- refresh
+- contributor
+- diary
+- film
+- list
+- logged
+- roulette
+- user
 
 Open Larger Bugs.
 
