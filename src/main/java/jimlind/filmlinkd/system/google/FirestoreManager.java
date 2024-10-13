@@ -8,6 +8,8 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.User;
@@ -51,6 +53,18 @@ public class FirestoreManager {
       return query.get().getCount();
     } catch (Exception e) {
       return 0;
+    }
+  }
+
+  public List<QueryDocumentSnapshot> getUserDocumentListByChannelId(String channelId) {
+    String collectionId = this.config.getFirestoreCollectionId();
+    Map<String, String> channelMap = Map.ofEntries(Map.entry("channelId", channelId));
+    ApiFuture<QuerySnapshot> query =
+        this.db.collection(collectionId).whereArrayContains("channelList", channelMap).get();
+    try {
+      return query.get().getDocuments();
+    } catch (Exception e) {
+      return new ArrayList<>();
     }
   }
 
