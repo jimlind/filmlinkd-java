@@ -73,7 +73,7 @@ public class DiaryEntryEmbedFactory {
       reviewText += "...";
     }
 
-    // Format Review Title and Review Text as Description
+    // Format Review Title and Review Text as EmbedDescription
     reviewText =
         message.entry.containsSpoilers.equals("true") ? "||" + reviewText + "||" : reviewText;
     reviewText = reviewText.replaceAll("[\r\n]+", "\n");

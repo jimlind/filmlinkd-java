@@ -1,9 +1,9 @@
 package jimlind.filmlinkd.system.discord.embedComponent;
 
-public class Description {
+public class EmbedDescription {
   private String descriptionText = "";
 
-  public Description(String descriptionText) {
+  public EmbedDescription(String descriptionText) {
     this.descriptionText = descriptionText;
   }
 

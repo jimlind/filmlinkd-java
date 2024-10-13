@@ -1,7 +1,7 @@
 package jimlind.filmlinkd.factory.messageEmbed;
 
 import java.util.ArrayList;
-import jimlind.filmlinkd.system.discord.embedComponent.Description;
+import jimlind.filmlinkd.system.discord.embedComponent.EmbedDescription;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class HelpEmbedFactory {
     String descriptionText =
         String.format(
             "%s v%s\nTracking %s users on %s servers", name, version, userCount, guildCount);
-    embedBuilder.setDescription(new Description(descriptionText).build());
+    embedBuilder.setDescription(new EmbedDescription(descriptionText).build());
 
     // Set fields for slash commands
     embedBuilder.addField("/help", "Shows this message", false);
