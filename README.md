@@ -51,12 +51,12 @@ Achievements of this project right now.
 - Avoid another lookup before sendSuccess
 - Resolve issue where channel overrides should be ignored
 - Command for /help
+- Command for /following
 
 Next.
 
 - follow
 - unfollow
-- following
 - refresh
 - contributor
 - diary
