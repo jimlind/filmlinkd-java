@@ -52,19 +52,23 @@ Achievements of this project right now.
 - Resolve issue where channel overrides should be ignored
 - Command for /help
 - Command for /following
+- Command for /contributor
 
 Next.
 
 - follow
 - unfollow
 - refresh
-- contributor
 - diary
 - film
 - list
 - logged
 - roulette
 - user
+- put filmlinkd in the api request name
+- use the auth keys for the api request stuff
+- put a timeout on the api request stuff
+- test more error states of the api request stuff
 
 Open Larger Bugs.
 
