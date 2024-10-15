@@ -12,13 +12,13 @@ import org.springframework.web.util.UriBuilder;
 public class Client {
   static final String BASE_URL = "https://api.letterboxd.com/api/v0/";
 
-  public <T> ResponseEntity<T> get(Function<UriBuilder, URI> uriFunction, Class<T> clazz) {
+  public <T> ResponseEntity<T> get(Function<UriBuilder, URI> uriFunction, Class<T> inputClass) {
     return this.buildClient()
         .get()
         .uri(uriFunction)
         .acceptCharset(StandardCharsets.UTF_8)
         .retrieve()
-        .toEntity(clazz)
+        .toEntity(inputClass)
         .block();
   }
 
