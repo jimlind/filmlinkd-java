@@ -53,6 +53,8 @@ Achievements of this project right now.
 - Command for /help
 - Command for /following
 - Command for /contributor
+- Add Filmlinkd header to request
+- Add timeout for API request
 
 Next.
 
@@ -65,9 +67,7 @@ Next.
 - logged
 - roulette
 - user
-- put filmlinkd in the api request name
 - use the auth keys for the api request stuff
-- put a timeout on the api request stuff
 - test more error states of the api request stuff
 
 Open Larger Bugs.

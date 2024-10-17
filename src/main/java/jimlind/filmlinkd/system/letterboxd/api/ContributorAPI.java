@@ -23,7 +23,10 @@ public class ContributorAPI {
                 .build();
 
     ResponseEntity<LBSearchResponse> response = this.client.get(buildURI, LBSearchResponse.class);
+    if (response == null || response.getBody() == null || response.getBody().items.isEmpty()) {
+      return null;
+    }
 
-    return response != null ? response.getBody() : null;
+    return response.getBody();
   }
 }
