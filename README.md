@@ -68,7 +68,6 @@ Next.
 - roulette
 - user
 - use the auth keys for the api request stuff
-- test more error states of the api request stuff
 
 Open Larger Bugs.
 
