@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ContributorHandler implements Handler {
-  @Autowired private ContributorEmbedFactory contributorEmbedFactory;
   @Autowired private ContributorAPI contributorAPI;
+  @Autowired private ContributorEmbedFactory contributorEmbedFactory;
 
   public String getEventName() {
     return "contributor";
