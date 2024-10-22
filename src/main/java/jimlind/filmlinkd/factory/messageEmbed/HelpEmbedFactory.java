@@ -1,8 +1,8 @@
 package jimlind.filmlinkd.factory.messageEmbed;
 
 import java.util.ArrayList;
+import jimlind.filmlinkd.system.discord.embedComponent.EmbedBuilder;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedDescription;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Component;
 

@@ -3,22 +3,20 @@ package jimlind.filmlinkd.factory.messageEmbed;
 import io.github.furstenheim.CopyDown;
 import io.github.furstenheim.Options;
 import io.github.furstenheim.OptionsBuilder;
-import jimlind.filmlinkd.model.Message;
-import jimlind.filmlinkd.model.User;
-import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.springframework.stereotype.Component;
-
-import java.awt.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
+import jimlind.filmlinkd.model.Message;
+import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.discord.embedComponent.EmbedBuilder;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
@@ -89,7 +87,6 @@ public class DiaryEntryEmbedFactory {
     if (!message.entry.image.isBlank()) {
       embedBuilder.setThumbnail(message.entry.image);
     }
-    embedBuilder.setColor(new Color(0xa700bd));
 
     ArrayList<MessageEmbed> collection = new ArrayList<MessageEmbed>();
     collection.add(embedBuilder.build());

@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import jimlind.filmlinkd.system.discord.embedComponent.EmbedBuilder;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedDescription;
 import jimlind.filmlinkd.system.letterboxd.model.LBContributionStatistics;
 import jimlind.filmlinkd.system.letterboxd.model.LBContributor;
 import jimlind.filmlinkd.system.letterboxd.model.LBLink;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Component;
 
