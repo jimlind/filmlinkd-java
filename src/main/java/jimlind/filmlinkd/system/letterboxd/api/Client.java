@@ -1,10 +1,8 @@
 package jimlind.filmlinkd.system.letterboxd.api;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.function.Function;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import jimlind.filmlinkd.Config;
@@ -13,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.UriBuilder;
 
 @Component
 @Slf4j
@@ -23,12 +19,12 @@ public class Client {
 
   static final String BASE_URL = "https://api.letterboxd.com/api/v0/";
 
-  public <T> ResponseEntity<T> get(Function<UriBuilder, URI> uriFunction, Class<T> inputClass) {
+  public <T> ResponseEntity<T> get(String uri, Class<T> inputClass) {
     try {
       ResponseEntity<T> response =
           this.buildClient()
               .get()
-              .uri(uriFunction)
+              .uri(uri)
               .header("User-Agent", "Filmlinkd - A Letterboxd Discord Bot")
               .header("Authorization", "")
               .acceptCharset(StandardCharsets.UTF_8)
@@ -39,11 +35,10 @@ public class Client {
 
       return validateResponse(response);
     } catch (Exception e) {
-      UriBuilder b = new DefaultUriBuilderFactory().builder();
       log.atError()
           .setMessage("Error on WebClient GET")
           .addKeyValue("exception", e)
-          .addKeyValue("uri", uriFunction.apply(b))
+          .addKeyValue("uri", uri)
           .addKeyValue("classOutput", inputClass)
           .log();
 
