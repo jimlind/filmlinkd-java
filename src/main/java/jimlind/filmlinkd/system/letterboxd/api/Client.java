@@ -30,6 +30,7 @@ public class Client {
               .get()
               .uri(uriFunction)
               .header("User-Agent", "Filmlinkd - A Letterboxd Discord Bot")
+              .header("Authorization", "")
               .acceptCharset(StandardCharsets.UTF_8)
               .retrieve()
               .toEntity(inputClass)
