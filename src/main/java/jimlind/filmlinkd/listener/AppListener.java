@@ -11,12 +11,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 class AppListener implements ApplicationListener<ApplicationReadyEvent> {
-
-  @Autowired ProcessManager processManager;
-
-  @Autowired PubSubManager pubSubManager;
-
-  @Autowired ShutdownThread shutdownThread;
+  private @Autowired ProcessManager processManager;
+  private @Autowired PubSubManager pubSubManager;
+  private @Autowired ShutdownThread shutdownThread;
 
   @Override
   public void onApplicationEvent(@NotNull ApplicationReadyEvent event) {
