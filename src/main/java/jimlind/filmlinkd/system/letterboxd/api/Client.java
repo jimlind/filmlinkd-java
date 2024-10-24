@@ -19,31 +19,10 @@ public class Client {
 
   static final String BASE_URL = "https://api.letterboxd.com/api/v0/";
 
-  public <T> ResponseEntity<T> get(String uri, Class<T> inputClass) {
-    try {
-      ResponseEntity<T> response =
-          this.buildClient()
-              .get()
-              .uri(uri)
-              .header("User-Agent", "Filmlinkd - A Letterboxd Discord Bot")
-              .header("Authorization", "")
-              .acceptCharset(StandardCharsets.UTF_8)
-              .retrieve()
-              .toEntity(inputClass)
-              .timeout(Duration.ofSeconds(6))
-              .block();
+  public <T> ResponseEntity<T> get(String path, Class<T> inputClass) {
+    String authorization = "";
 
-      return validateResponse(response);
-    } catch (Exception e) {
-      log.atError()
-          .setMessage("Error on WebClient GET")
-          .addKeyValue("exception", e)
-          .addKeyValue("uri", uri)
-          .addKeyValue("classOutput", inputClass)
-          .log();
-
-      return null;
-    }
+    return this.request(path, authorization, inputClass);
   }
 
   public <T> ResponseEntity<T> getAuthorized(String path, Class<T> inputClass) {
@@ -52,42 +31,45 @@ public class Client {
     String now = String.valueOf(Instant.now().getEpochSecond());
     String uri = path + String.format("?apikey=%s&nonce=%s&timestamp=%s", key, nonce, now);
     String url = BASE_URL + uri;
-    String signature = this.buildSignature("GET", url);
+    String authorization = "Signature " + this.buildSignature("GET", url);
 
-    ResponseEntity<T> response =
-        this.buildClient()
+    return this.request(uri, authorization, inputClass);
+  }
+
+  private <T> ResponseEntity<T> request(String uri, String authorization, Class<T> inputClass) {
+    WebClient.ResponseSpec responseSpec =
+        WebClient.builder()
+            .baseUrl(BASE_URL)
+            .build()
             .get()
             .uri(uri)
             .header("User-Agent", "Filmlinkd - A Letterboxd Discord Bot")
-            .header("Authorization", "Signature " + signature)
+            .header("Authorization", authorization)
             .acceptCharset(StandardCharsets.UTF_8)
-            .retrieve()
-            .toEntity(inputClass)
-            .timeout(Duration.ofSeconds(6))
-            .block();
+            .retrieve();
 
-    return validateResponse(response);
-  }
-
-  private WebClient buildClient() {
-    return WebClient.builder().baseUrl(BASE_URL).build();
-  }
-
-  private <T> ResponseEntity<T> validateResponse(ResponseEntity<T> response) {
-    if (response == null) {
+    try {
+      ResponseEntity<T> response =
+          responseSpec.toEntity(inputClass).timeout(Duration.ofSeconds(6)).block();
+      return validateResponse(response);
+    } catch (Exception e) {
+      log.atError()
+          .setMessage("Error on WebClient GET")
+          .addKeyValue("exception", e)
+          .addKeyValue("uri", uri)
+          .addKeyValue("classOutput", inputClass)
+          .log();
       return null;
     }
-    if (response.getStatusCode().is2xxSuccessful()) {
-      return response;
-    }
-    return null;
   }
 
   private String buildSignature(String method, String url) {
+    method = method.toUpperCase();
+    String shared = this.config.getLetterboxdApiShared();
+    SecretKeySpec secretKeySpec = new SecretKeySpec(shared.getBytes(), "HmacSHA256");
+
     try {
-      String shared = this.config.getLetterboxdApiShared();
       Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-      SecretKeySpec secretKeySpec = new SecretKeySpec(shared.getBytes(), "HmacSHA256");
       sha256_HMAC.init(secretKeySpec);
       String data = method + "\u0000" + url + "\u0000"; // "�"
       return bytesToHex(sha256_HMAC.doFinal(data.getBytes()));
@@ -100,5 +82,15 @@ public class Client {
     final StringBuilder builder = new StringBuilder();
     for (final byte b : in) builder.append(String.format("%02x", b));
     return builder.toString();
+  }
+
+  private <T> ResponseEntity<T> validateResponse(ResponseEntity<T> response) {
+    if (response == null) {
+      return null;
+    }
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    }
+    return null;
   }
 }

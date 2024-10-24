@@ -11,9 +11,9 @@ public class ContributorAPI {
 
   public LBSearchResponse fetch(String searchTerm) {
     String uriTemplate = "search/?input=%s&include=%s&perPage=%s";
-    String uri = String.format(uriTemplate, searchTerm, "ContributorSearchItem", 1);
+    String path = String.format(uriTemplate, searchTerm, "ContributorSearchItem", 1);
 
-    ResponseEntity<LBSearchResponse> response = this.client.get(uri, LBSearchResponse.class);
+    ResponseEntity<LBSearchResponse> response = this.client.get(path, LBSearchResponse.class);
     if (response == null || response.getBody() == null || response.getBody().items.isEmpty()) {
       return null;
     }
