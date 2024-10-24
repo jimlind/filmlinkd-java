@@ -12,6 +12,7 @@ import java.util.Locale;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedBuilder;
+import jimlind.filmlinkd.system.discord.embedComponent.EmbedStars;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jsoup.Jsoup;
@@ -46,10 +47,7 @@ public class DiaryEntryEmbedFactory {
     }
 
     if (message.entry.starCount > 0) {
-      // Whole stars
-      reviewTitle += "<:s:851134022251970610>".repeat((int) Math.floor(message.entry.starCount));
-      // Half star if necessary
-      reviewTitle += (message.entry.starCount % 1 > 0) ? "<:h:851199023854649374>" : "";
+      reviewTitle += new EmbedStars(message.entry.starCount).build();
     }
     if (message.entry.rewatch != null && message.entry.rewatch) {
       reviewTitle += " <:r:851135667546488903>";
