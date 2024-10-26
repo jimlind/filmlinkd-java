@@ -8,11 +8,16 @@ public class EmbedStars {
   }
 
   public String build() {
-    if (this.starCount == 0) {
-      return "";
+    String fullStar = "<:s:851134022251970610>";
+    String halfStar = "<:h:851199023854649374>";
+
+    String starString = fullStar.repeat((int) Math.floor(this.starCount));
+    double remainder = this.starCount % 1;
+    if (remainder >= 0.75) {
+      starString += fullStar;
+    } else if (remainder >= 0.25) {
+      starString += halfStar;
     }
-    String starString = "<:s:851134022251970610>".repeat((int) Math.floor(this.starCount));
-    starString += (this.starCount % 1 > 0) ? "<:h:851199023854649374>" : "";
 
     return starString;
   }
