@@ -19,6 +19,10 @@ public class EmbedDirectors {
   }
 
   public String build() {
+    if (this.contributions == null) {
+      return "";
+    }
+
     String directorLinks =
         contributions.contributors.stream()
             .map(c -> String.format("[%s](https://boxd.it/%s)", c.name, c.id))
