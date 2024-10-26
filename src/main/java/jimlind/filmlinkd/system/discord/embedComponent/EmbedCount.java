@@ -13,7 +13,7 @@ public class EmbedCount {
     long billion = 1000000000L;
 
     String suffix = "";
-    float number = 0;
+    float number = this.count;
 
     if (this.count >= billion) {
       suffix = "B";
