@@ -6,4 +6,6 @@ public class LBAbstractSearchItem {
   public long score;
   public LBContributor contributor;
   public LBFilmSummary film;
+  public LBMemberSummary member;
+  public LBListSummary list;
 }
