@@ -10,6 +10,6 @@ public class LoggedHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Big. Heavy. Wood.").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }

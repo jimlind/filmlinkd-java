@@ -10,6 +10,6 @@ public class RouletteHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Gambler.").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }

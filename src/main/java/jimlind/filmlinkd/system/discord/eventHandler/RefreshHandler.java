@@ -10,6 +10,6 @@ public class RefreshHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Redux.").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }

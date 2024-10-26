@@ -10,6 +10,6 @@ public class UserHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Who is using this?").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }

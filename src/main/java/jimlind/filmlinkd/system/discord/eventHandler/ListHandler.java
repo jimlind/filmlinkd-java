@@ -10,6 +10,6 @@ public class ListHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Santa is coming to town.").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }

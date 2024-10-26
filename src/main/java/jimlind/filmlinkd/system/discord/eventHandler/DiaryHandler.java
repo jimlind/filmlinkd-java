@@ -10,6 +10,6 @@ public class DiaryHandler implements Handler {
   }
 
   public void handleEvent(SlashCommandInteractionEvent event) {
-    event.reply("Don't peak.").queue();
+    event.reply(":construction: UNDER CONSTRUCTION :construction:").queue();
   }
 }
