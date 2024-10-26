@@ -55,6 +55,8 @@ Achievements of this project right now.
 - Command for /contributor
 - Add Filmlinkd header to request
 - Add timeout for API request
+- Command for /film
+- Add authorized request logic
 
 Next.
 
@@ -67,7 +69,10 @@ Next.
 - logged
 - roulette
 - user
-- use the auth keys for the api request stuff
+- make the error and not found messages ephemeral
+- todos for error and not found message consolidation
+- there are a bunch of Long and Float objects scattered around instead of primitives
+- ensure caught issues send messages to users
 
 Open Larger Bugs.
 
