@@ -5,4 +5,5 @@ public class LBAbstractSearchItem {
   public String type;
   public long score;
   public LBContributor contributor;
+  public LBFilmSummary film;
 }
