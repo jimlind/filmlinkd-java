@@ -38,12 +38,16 @@ public class FirestoreManager {
     this.db = firestoreOptions.getService();
   }
 
-  public QueryDocumentSnapshot getUserDocument(String userLID) throws Exception {
+  public QueryDocumentSnapshot getUserDocument(String userLID) {
     String collectionId = this.config.getFirestoreCollectionId();
-
     ApiFuture<QuerySnapshot> query =
         this.db.collection(collectionId).whereEqualTo("letterboxdId", userLID).limit(1).get();
-    return query.get().getDocuments().get(0);
+
+    try {
+      return query.get().getDocuments().get(0);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public long getUserCount() {
@@ -66,6 +70,11 @@ public class FirestoreManager {
     } catch (Exception e) {
       return new ArrayList<>();
     }
+  }
+
+  public boolean updateUserSubscription(String userLID, String channelId) {
+    // TODO: Fill this out
+    return false;
   }
 
   public boolean updateUserPrevious(
