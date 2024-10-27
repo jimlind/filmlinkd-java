@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import jimlind.filmlinkd.model.CombinedLBFilmModel;
 import jimlind.filmlinkd.system.discord.embedComponent.*;
+import jimlind.filmlinkd.system.letterboxd.ImageHelper;
 import jimlind.filmlinkd.system.letterboxd.model.LBFilm;
 import jimlind.filmlinkd.system.letterboxd.model.LBFilmStatistics;
 import jimlind.filmlinkd.system.letterboxd.model.LBFilmStatisticsCounts;
@@ -20,7 +21,7 @@ public class FilmEmbedFactory {
     LBFilmSummary summary = filmCombination.filmSummary;
 
     String releaseYear = film.releaseYear > 0 ? String.format(" (%s)", film.releaseYear) : "";
-    String imageURL = new EmbedImage(film.poster).build();
+    String imageURL = new ImageHelper(film.poster).getTallest();
 
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setTitle(film.name + releaseYear);

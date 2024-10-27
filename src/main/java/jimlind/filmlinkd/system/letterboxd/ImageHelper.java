@@ -1,16 +1,16 @@
-package jimlind.filmlinkd.system.discord.embedComponent;
+package jimlind.filmlinkd.system.letterboxd;
 
 import jimlind.filmlinkd.system.letterboxd.model.LBImage;
 import jimlind.filmlinkd.system.letterboxd.model.LBImageSize;
 
-public class EmbedImage {
+public class ImageHelper {
   private LBImage image;
 
-  public EmbedImage(LBImage image) {
+  public ImageHelper(LBImage image) {
     this.image = image;
   }
 
-  public String build() {
+  public String getTallest() {
     if (this.image == null) {
       return "";
     }
