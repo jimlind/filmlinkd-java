@@ -20,7 +20,7 @@ public class UserFactory {
     }
   }
 
-  public User createFromCombinedModel(LBMember member) {
+  public User createFromMember(LBMember member) {
     try {
       User user = new User();
 
