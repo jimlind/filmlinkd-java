@@ -29,7 +29,9 @@ public class Client {
     String key = this.config.getLetterboxdApiKey();
     String nonce = String.valueOf(java.util.UUID.randomUUID());
     String now = String.valueOf(Instant.now().getEpochSecond());
-    String uri = path + String.format("?apikey=%s&nonce=%s&timestamp=%s", key, nonce, now);
+    // TODO: This feels like a terrible way to build a URL string
+    String symbol = path.contains("?") ? "&" : "?";
+    String uri = path + symbol + String.format("apikey=%s&nonce=%s&timestamp=%s", key, nonce, now);
     String url = BASE_URL + uri;
     String authorization = "Signature " + this.buildSignature("GET", url);
 
