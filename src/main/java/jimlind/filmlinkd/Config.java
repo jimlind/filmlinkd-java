@@ -16,6 +16,8 @@ public class Config {
   private static final String DISCORD_BOT_TOKEN_NAME = "discordBotToken";
   private static final String PUBSUB_LOG_ENTRY_TOPIC_NAME = "logEntryTopicName";
   private static final String PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME = "logEntrySubscriptionName";
+  private static final String PUBSUB_COMMAND_TOPIC_NAME = "commandTopicName";
+  private static final String PUBSUB_COMMAND_SUBSCRIPTION_NAME = "commandSubscriptionName";
   private static final String FIRESTORE_COLLECTION_ID = "firesStoreCollectionId";
   private static final String LETTERBOXD_API_KEY = "letterboxdAPIKey";
   private static final String LETTERBOXD_API_SHARED = "letterboxdAPIShared";
@@ -81,6 +83,14 @@ public class Config {
 
   public String getPubSubLogEntrySubscriptionName() {
     return publicProperties.getProperty(PUBSUB_LOG_ENTRY_SUBSCRIPTION_NAME);
+  }
+
+  public String getPubSubCommandTopicName() {
+    return publicProperties.getProperty(PUBSUB_COMMAND_TOPIC_NAME);
+  }
+
+  public String getPubSubCommandSubscriptionName() {
+    return publicProperties.getProperty(PUBSUB_COMMAND_SUBSCRIPTION_NAME);
   }
 
   public String getFirestoreCollectionId() {
