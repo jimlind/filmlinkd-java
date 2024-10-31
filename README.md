@@ -73,6 +73,7 @@ Next.
 - todos for error and not found message consolidation
 - there are a bunch of Long and Float objects scattered around instead of primitives
 - ensure caught issues send messages to users
+- support channel option for follow/unfollow/following
 
 Open Larger Bugs.
 
