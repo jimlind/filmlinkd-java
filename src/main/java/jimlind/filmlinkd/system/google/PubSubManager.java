@@ -30,17 +30,18 @@ public class PubSubManager {
 
   public void start() {
     String projectId = this.config.getGoogleProjectId();
-    String pubSubTopic = this.config.getPubSubLogEntryTopicName();
-    String pubSubSubscription = this.config.getPubSubLogEntrySubscriptionName();
+    String pubSubLogEntryTopic = this.config.getPubSubLogEntryTopicName();
+    String pubSubLogEntrySubscription = this.config.getPubSubLogEntrySubscriptionName();
 
-    TopicName topicName = TopicName.of(projectId, pubSubTopic);
-    SubscriptionName subscriptionName = SubscriptionName.of(projectId, pubSubSubscription);
+    TopicName logEntryTopicName = TopicName.of(projectId, pubSubLogEntryTopic);
+    SubscriptionName logEntrySubscriptionName =
+        SubscriptionName.of(projectId, pubSubLogEntrySubscription);
 
     // This client create is designed specifically for a try-with-resources statement
     try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
       // If the subscription doesn't exit, create it.
-      if (!hasSubscription(client, subscriptionName.toString())) {
-        createSubscription(client, subscriptionName, topicName);
+      if (!hasSubscription(client, logEntrySubscriptionName.toString())) {
+        createSubscription(client, logEntrySubscriptionName, logEntryTopicName);
       }
     } catch (Exception e) {
       log.error("Unable to setup connection to the PubSub client", e);
@@ -49,11 +50,11 @@ public class PubSubManager {
 
     // Build a subscriber wired up to a message receivers and event listeners
     this.subscriber =
-        Subscriber.newBuilder(subscriptionName.toString(), this.messageReceiver).build();
+        Subscriber.newBuilder(logEntrySubscriptionName.toString(), this.messageReceiver).build();
     subscriber.addListener(this.subscriberListener, MoreExecutors.directExecutor());
 
     this.subscriber.startAsync().awaitRunning();
-    log.info("Staring Listening for Messages on {}", subscriptionName);
+    log.info("Staring Listening for Messages on {}", logEntrySubscriptionName);
   }
 
   public void stop() {
