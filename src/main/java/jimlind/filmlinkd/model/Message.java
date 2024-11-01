@@ -1,5 +1,7 @@
 package jimlind.filmlinkd.model;
 
+import com.google.gson.Gson;
+
 public class Message {
   public Entry entry;
   public String channelId;
@@ -18,7 +20,7 @@ public class Message {
     public Float starCount;
     public Boolean rewatch;
     public Boolean liked;
-    public String containsSpoilers;
+    public Boolean containsSpoilers;
     public Boolean adult;
     public String review;
     public Long updatedDate;
@@ -27,5 +29,9 @@ public class Message {
 
   public boolean hasChannelOverride() {
     return !this.channelId.isBlank();
+  }
+
+  public String toJson() {
+    return new Gson().toJson(this);
   }
 }

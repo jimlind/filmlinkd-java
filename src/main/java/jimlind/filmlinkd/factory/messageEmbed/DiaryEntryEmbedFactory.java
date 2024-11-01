@@ -70,8 +70,7 @@ public class DiaryEntryEmbedFactory {
     }
 
     // Format Review Title and Review Text as EmbedDescription
-    reviewText =
-        message.entry.containsSpoilers.equals("true") ? "||" + reviewText + "||" : reviewText;
+    reviewText = message.entry.containsSpoilers ? "||" + reviewText + "||" : reviewText;
     reviewText = reviewText.replaceAll("[\r\n]+", "\n");
     String rule = reviewTitle.length() > 1 && reviewText.length() > 1 ? "┈".repeat(12) + "\n" : "";
     embedBuilder.setDescription(reviewTitle + rule + reviewText);
