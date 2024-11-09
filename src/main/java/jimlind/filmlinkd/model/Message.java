@@ -3,6 +3,17 @@ package jimlind.filmlinkd.model;
 import com.google.gson.Gson;
 
 public class Message {
+  public enum Type {
+    watch,
+    review,
+  };
+
+  public enum PublishSource {
+    Normal,
+    VIP,
+    Follow,
+  }
+
   public Entry entry;
   public String channelId;
 
@@ -10,7 +21,7 @@ public class Message {
     public String lid;
     public String userName;
     public String userLid;
-    public String type;
+    public Message.Type type;
     public String link;
     public Long publishedDate;
     public String filmTitle;
@@ -24,7 +35,7 @@ public class Message {
     public Boolean adult;
     public String review;
     public Long updatedDate;
-    public String publishSource;
+    public Message.PublishSource publishSource;
   }
 
   public boolean hasChannelOverride() {
