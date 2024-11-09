@@ -7,7 +7,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.pubsub.v1.*;
-import com.google.pubsub.v1.Subscription.Builder;
 import java.util.Objects;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.listener.SubscriberListener;
@@ -117,7 +116,7 @@ public class PubSubManager {
 
   private void createSubscription(
       SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
-    Builder builder =
+    Subscription.Builder builder =
         Subscription.newBuilder()
             .setName(subscriptionName.toString())
             .setTopic(topicName.toString())
