@@ -1,5 +1,7 @@
 package jimlind.filmlinkd.system.letterboxd.model;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 // https://api-docs.letterboxd.com/#/schemas/LogEntry
@@ -9,7 +11,7 @@ public class LBLogEntry {
   public LBMemberSummary owner;
   public LBFilmSummary film;
   public LBDiaryDetails diaryDetails;
-  public LBReview review;
+  @Nullable public LBReview review;
   @Deprecated public List<String> tags;
   public List<String> tags2;
   public String whenCreated;
