@@ -26,7 +26,7 @@ public class DiaryEntryEmbedFactory {
     EmbedBuilder embedBuilder = new EmbedBuilder();
 
     String profileName = user.displayName;
-    String authorTitle = "%s %sed...".formatted(profileName, message.entry.type);
+    String authorTitle = "%s %sed...".formatted(profileName, message.entry.type.toString());
     String profileURL = "https://letterboxd.com/%s/".formatted(user.userName);
     embedBuilder.setAuthor(authorTitle, profileURL, user.image);
 
