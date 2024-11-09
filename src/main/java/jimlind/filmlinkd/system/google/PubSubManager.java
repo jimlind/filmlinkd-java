@@ -73,7 +73,7 @@ public class PubSubManager {
     subscriber.addListener(this.subscriberListener, MoreExecutors.directExecutor());
 
     this.subscriber.startAsync().awaitRunning();
-    log.info("Staring Listening for Messages on {}", logEntrySubscriptionName);
+    log.info("Starting Listening for Messages on {}", logEntrySubscriptionName);
   }
 
   public void stopListening() {
