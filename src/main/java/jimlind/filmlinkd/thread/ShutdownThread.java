@@ -9,15 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class ShutdownThread extends Thread {
-    @Autowired
-    private ProcessManager discordProcessManager;
+  @Autowired private ProcessManager discordProcessManager;
 
-    @Autowired
-    private PubSubManager pubSubManager;
+  @Autowired private PubSubManager pubSubManager;
 
-    public void run() {
-        log.info("Shutting Things Down!");
-        this.pubSubManager.stop();
-        this.discordProcessManager.disconnect();
-    }
+  public void run() {
+    log.info("Shutting Things Down!");
+    this.pubSubManager.stopListening();
+    this.discordProcessManager.disconnect();
+  }
 }

@@ -55,7 +55,7 @@ public class PubSubManager {
     this.commandSubscriptionName = SubscriptionName.of(projectId, pubSubCommandSubscription);
   }
 
-  public void start() {
+  public void startListening() {
     // This client create is designed specifically for a try-with-resources statement
     try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
       // If the subscription doesn't exit, create it.
@@ -76,7 +76,7 @@ public class PubSubManager {
     log.info("Staring Listening for Messages on {}", logEntrySubscriptionName);
   }
 
-  public void stop() {
+  public void stopListening() {
     if (this.subscriber != null) {
       log.info(
           "Stopping PubSub Listening for Messages on {}",

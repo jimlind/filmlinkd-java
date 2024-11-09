@@ -24,6 +24,6 @@ class AppListener implements ApplicationListener<ApplicationReadyEvent> {
     this.processManager.connect();
 
     // Start the PubSub listener
-    this.pubSubManager.start();
+    this.pubSubManager.startListening();
   }
 }
