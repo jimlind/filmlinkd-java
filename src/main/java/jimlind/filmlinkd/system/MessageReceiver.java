@@ -22,6 +22,9 @@ public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiv
   // happens. If we let every PubSub event trigger some logic it can take over the
   // CPU really quickly.
   public void receiveMessage(PubsubMessage pubsubMessage, AckReplyConsumer ackReplyConsumer) {
+    // Immediately ack the message. It'll get sent again eventually if it doesn't register.
+    ackReplyConsumer.ack();
+
     String regex = "\"lid\":\"(\\w+)\"";
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(pubsubMessage.getData().toStringUtf8());
@@ -48,7 +51,6 @@ public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiv
     if (shouldBeQueued(scrapedResult)) {
       this.scrapedResultQueue.set(scrapedResult);
     }
-    ackReplyConsumer.ack();
   }
 
   // We expect duplicates to come in from the PubSub queue all the time so we need to limit when we
