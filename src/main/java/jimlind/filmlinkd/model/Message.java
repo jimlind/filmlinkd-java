@@ -1,6 +1,7 @@
 package jimlind.filmlinkd.model;
 
 import com.google.gson.Gson;
+import org.jetbrains.annotations.Nullable;
 
 public class Message {
   public enum Type {
@@ -15,7 +16,7 @@ public class Message {
   }
 
   public Entry entry;
-  public String channelId;
+  @Nullable public String channelId;
 
   public static class Entry {
     public String lid;
@@ -39,6 +40,10 @@ public class Message {
   }
 
   public boolean hasChannelOverride() {
+    if (this.channelId == null) {
+      return false;
+    }
+
     return !this.channelId.isBlank();
   }
 
