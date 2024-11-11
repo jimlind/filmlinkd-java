@@ -13,7 +13,7 @@ public class LBLogEntry {
   public LBDiaryDetails diaryDetails;
   @Nullable public LBReview review;
   @Deprecated public List<String> tags;
-  public List<String> tags2;
+  public List<LBTag> tags2;
   public String whenCreated;
   public String whenUpdated;
   public float rating;
@@ -24,5 +24,5 @@ public class LBLogEntry {
   @FirstParty public String posterPickerUrl;
   public LBImage backdrop;
   public float backdropFocalPoint;
-  public List<String> targeting;
+  @FirstParty public List<String> targeting;
 }
