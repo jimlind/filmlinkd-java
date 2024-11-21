@@ -25,20 +25,14 @@ public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiv
     // Immediately ack the message. It'll get sent again eventually if it doesn't register.
     ackReplyConsumer.ack();
 
-    String regex = "\"lid\":\"(\\w+)\"";
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(pubsubMessage.getData().toStringUtf8());
-    boolean patternFound = matcher.find();
+    String messagePayload = pubsubMessage.getData().toStringUtf8();
+    String entryLid = getEntryLid(messagePayload);
+    String channelId = getChannelId(messagePayload);
 
-    String entryLid = "";
-    if (patternFound) {
-      entryLid = matcher.group(1);
-    }
-
-    // We are expecting multiple requests to post a diary entry so we maintain the one source of
-    // truth on the server that sends messages. We keep an in memory cache.
-    if (entryCache.get(entryLid)) {
-      // If the key is in the cache skip it
+    // We are expecting multiple requests to post a diary entry so we attempt to maintain the one
+    // source of truth on the server that sends messages. One mechanism of that is an memory cache.
+    if (entryCache.get(entryLid) && channelId.isBlank()) {
+      // If the key is in the cache and channelId isn't provided skip it
       return;
     } else {
       // Assume that write will succeed so write to cache. If it actually doesn't succeed then it'll
@@ -53,9 +47,33 @@ public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiv
     }
   }
 
+  private static String getEntryLid(String input) {
+    String regex = "\"lid\":\"(\\w+)\"";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(input);
+
+    if (matcher.find()) {
+      return matcher.group(1);
+    } else {
+      return "";
+    }
+  }
+
+  private static String getChannelId(String input) {
+    String regex = "\"channelId\":\"(\\d+)\"";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(input);
+
+    if (matcher.find()) {
+      return matcher.group(1);
+    } else {
+      return "";
+    }
+  }
+
   // We expect duplicates to come in from the PubSub queue all the time so we need to limit when we
   // actually want them to be put in the queue for processing.
-  private boolean shouldBeQueued(ScrapedResult scrapedResult) {
+  private static boolean shouldBeQueued(ScrapedResult scrapedResult) {
     if (scrapedResult.message.hasChannelOverride()) {
       return true;
     }
