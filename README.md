@@ -57,10 +57,11 @@ Achievements of this project right now.
 - Add timeout for API request
 - Command for /film
 - Add authorized request logic
+- Command for /follow
+- Patch some capitalization
 
 Next.
 
-- follow
 - unfollow
 - refresh
 - diary
