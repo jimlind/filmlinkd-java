@@ -15,7 +15,7 @@ public class ShutdownThread extends Thread {
 
   public void run() {
     log.info("Shutting Things Down!");
-    this.pubSubManager.stopListening();
+    this.pubSubManager.deactivate();
     this.discordProcessManager.disconnect();
   }
 }

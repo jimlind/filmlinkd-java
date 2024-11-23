@@ -14,86 +14,117 @@ import jimlind.filmlinkd.model.Command;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.system.MessageReceiver;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class PubSubManager {
-  private final Config config;
-  private final MessageReceiver messageReceiver;
-  private final SubscriberListener subscriberListener;
+  static final int RETENTION_SECONDS = 43200; // 12 Hours
+  static final int EXPIRATION_SECONDS = 86400; // 24 Hours
+  static final int ACK_DEADLINE_SECONDS = 10;
 
-  private final Duration retentionDuration = Duration.newBuilder().setSeconds(43200).build();
-  private final Duration expirationDuration = Duration.newBuilder().setSeconds(86400).build();
-  private final ExpirationPolicy expirationPolicy =
-      ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
+  @Autowired private Config config;
+  @Autowired private MessageReceiver messageReceiver;
+  @Autowired private SubscriberListener subscriberListener;
 
-  private final TopicName logEntryTopicName;
-  private final SubscriptionName logEntrySubscriptionName;
-  private final TopicName commandTopicName;
-  private final SubscriptionName commandSubscriptionName;
-  private Subscriber subscriber;
+  @Nullable private Publisher logEntryPublisher;
+  @Nullable private Publisher commandPublisher;
+  @Nullable private Subscriber logEntrySubscriber;
+  @Nullable private Subscriber commandSubscriber;
 
-  @Autowired
-  public PubSubManager(
-      Config config, MessageReceiver messageReceiver, SubscriberListener subscriberListener) {
-    this.config = config;
-    this.messageReceiver = messageReceiver;
-    this.subscriberListener = subscriberListener;
+  public void activate() {
+    this.commandPublisher =
+        buildPublisher(this.config.getGoogleProjectId(), this.config.getPubSubCommandTopicName());
+    this.logEntryPublisher =
+        buildPublisher(this.config.getGoogleProjectId(), this.config.getPubSubLogEntryTopicName());
 
-    String projectId = this.config.getGoogleProjectId();
-    String pubSubLogEntryTopic = this.config.getPubSubLogEntryTopicName();
-    String pubSubLogEntrySubscription = this.config.getPubSubLogEntrySubscriptionName();
-    String pubSubCommandTopic = this.config.getPubSubCommandTopicName();
-    String pubSubCommandSubscription = this.config.getPubSubCommandSubscriptionName();
-
-    this.logEntryTopicName = TopicName.of(projectId, pubSubLogEntryTopic);
-    this.logEntrySubscriptionName = SubscriptionName.of(projectId, pubSubLogEntrySubscription);
-    this.commandTopicName = TopicName.of(projectId, pubSubCommandTopic);
-    this.commandSubscriptionName = SubscriptionName.of(projectId, pubSubCommandSubscription);
+    this.logEntrySubscriber =
+        buildSubscriber(
+            this.config.getGoogleProjectId(),
+            this.config.getPubSubLogEntrySubscriptionName(),
+            this.config.getPubSubLogEntryTopicName());
   }
 
-  public void startListening() {
+  public void deactivate() {
+    if (this.logEntrySubscriber != null) {
+      log.atInfo()
+          .setMessage("Stopping PubSub Subscriber for Messages on {}")
+          .addArgument(this.logEntrySubscriber.getSubscriptionNameString())
+          .log();
+      this.logEntrySubscriber.stopAsync();
+    }
+
+    if (this.logEntryPublisher != null) {
+      log.info("Stopping PubSub Publisher on {}", this.logEntryPublisher.getTopicNameString());
+      this.logEntryPublisher.shutdown();
+    }
+
+    if (this.commandPublisher != null) {
+      log.info("Stopping PubSub Publisher on {}", this.commandPublisher.getTopicNameString());
+      this.commandPublisher.shutdown();
+    }
+  }
+
+  private static Publisher buildPublisher(String projectId, String topicId) {
+    TopicName topicName = TopicName.of(projectId, topicId);
+    try {
+      return Publisher.newBuilder(topicName).build();
+    } catch (Exception e) {
+      log.atError()
+          .setMessage("Unable to build Publisher {}")
+          .addArgument(topicId)
+          .addKeyValue("exception", e)
+          .log();
+      return null;
+    }
+  }
+
+  private Subscriber buildSubscriber(String projectId, String subscriptionId, String topicId) {
+    ProjectName projectName = ProjectName.of(projectId);
+    TopicName topicName = TopicName.of(projectId, topicId);
+    SubscriptionName subscriptionName = SubscriptionName.of(projectId, subscriptionId);
+
     // This client create is designed specifically for a try-with-resources statement
     try (SubscriptionAdminClient client = SubscriptionAdminClient.create()) {
       // If the subscription doesn't exit, create it.
-      if (!hasSubscription(client, logEntrySubscriptionName.toString())) {
-        createSubscription(client, logEntrySubscriptionName, logEntryTopicName);
+      if (!hasSubscription(client, projectName, subscriptionName)) {
+        createSubscription(client, subscriptionName, topicName);
       }
     } catch (Exception e) {
-      log.error("Unable to setup connection to the PubSub client", e);
-      return;
+      log.atError()
+          .setMessage("Unable to setup connection to the PubSub client")
+          .addKeyValue("exception", e)
+          .log();
+      return null;
     }
 
     // Build a subscriber wired up to a message receivers and event listeners
-    this.subscriber =
-        Subscriber.newBuilder(logEntrySubscriptionName.toString(), this.messageReceiver).build();
+    // If we are going to properly expand this to be a method that creates generic subscribers this
+    // will have to be rebuilt.
+    Subscriber subscriber =
+        Subscriber.newBuilder(subscriptionName.toString(), this.messageReceiver).build();
     subscriber.addListener(this.subscriberListener, MoreExecutors.directExecutor());
 
-    this.subscriber.startAsync().awaitRunning();
-    log.info("Starting Listening for Messages on {}", logEntrySubscriptionName);
-  }
+    subscriber.startAsync().awaitRunning();
+    log.info("Starting Listening for Messages on {}", subscriptionName);
 
-  public void stopListening() {
-    if (this.subscriber != null) {
-      log.info(
-          "Stopping PubSub Listening for Messages on {}",
-          this.subscriber.getSubscriptionNameString());
-      this.subscriber.stopAsync();
-    } else {
-      log.info("Stopping PubSub with no Active Subscriptions");
-    }
+    return subscriber;
   }
 
   public void publishCommand(Command command) {
+    if (this.commandPublisher == null) {
+      return;
+    }
+
+    ByteString data = ByteString.copyFromUtf8(command.toJson());
+    PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
     try {
-      ByteString data = ByteString.copyFromUtf8(command.toJson());
-      PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
-      Publisher.newBuilder(this.commandTopicName).build().publish(pubsubMessage).get();
+      this.commandPublisher.publish(pubsubMessage).get();
     } catch (Exception e) {
       log.atWarn()
-          .setMessage("Unable to publish command")
+          .setMessage("Unable to Publish command")
           .addKeyValue("command", command)
           .addKeyValue("exception", e)
           .log();
@@ -101,38 +132,50 @@ public class PubSubManager {
   }
 
   public void publishLogEntry(Message logEntry) {
+    if (this.logEntryPublisher == null) {
+      return;
+    }
+
+    ByteString data = ByteString.copyFromUtf8(logEntry.toJson());
+    PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
     try {
-      ByteString data = ByteString.copyFromUtf8(logEntry.toJson());
-      PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
-      Publisher.newBuilder(this.logEntryTopicName).build().publish(pubsubMessage).get();
+      this.logEntryPublisher.publish(pubsubMessage).get();
     } catch (Exception e) {
       log.atWarn()
-          .setMessage("Unable to publish logEntry")
+          .setMessage("Unable to Publish logEntry")
           .addKeyValue("logEntry", logEntry)
           .addKeyValue("exception", e)
           .log();
     }
   }
 
-  private void createSubscription(
-      SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
-    Subscription.Builder builder =
-        Subscription.newBuilder()
-            .setName(subscriptionName.toString())
-            .setTopic(topicName.toString())
-            .setAckDeadlineSeconds(10)
-            .setMessageRetentionDuration(retentionDuration)
-            .setExpirationPolicy(expirationPolicy);
-    client.createSubscription(builder.build());
-  }
-
-  private boolean hasSubscription(SubscriptionAdminClient client, String subscriptionName) {
-    String project = ProjectName.of(this.config.getGoogleProjectId()).toString();
+  private static boolean hasSubscription(
+      SubscriptionAdminClient client, ProjectName projectName, SubscriptionName subscriptionName) {
+    String project = projectName.toString();
     for (Subscription subscription : client.listSubscriptions(project).iterateAll()) {
-      if (Objects.equals(subscription.getName(), subscriptionName)) {
+      if (Objects.equals(subscription.getName(), subscriptionName.toString())) {
         return true;
       }
     }
     return false;
+  }
+
+  private static void createSubscription(
+      SubscriptionAdminClient client, SubscriptionName subscriptionName, TopicName topicName) {
+    // Setup duration and expirations
+    Duration retentionDuration = Duration.newBuilder().setSeconds(RETENTION_SECONDS).build();
+    Duration expirationDuration = Duration.newBuilder().setSeconds(EXPIRATION_SECONDS).build();
+    ExpirationPolicy expirationPolicy =
+        ExpirationPolicy.newBuilder().setTtl(expirationDuration).build();
+
+    Subscription.Builder builder =
+        Subscription.newBuilder()
+            .setName(subscriptionName.toString())
+            .setTopic(topicName.toString())
+            .setAckDeadlineSeconds(ACK_DEADLINE_SECONDS)
+            .setMessageRetentionDuration(retentionDuration)
+            .setExpirationPolicy(expirationPolicy);
+
+    client.createSubscription(builder.build());
   }
 }

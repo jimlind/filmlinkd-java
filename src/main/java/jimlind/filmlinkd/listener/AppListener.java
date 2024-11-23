@@ -23,7 +23,7 @@ class AppListener implements ApplicationListener<ApplicationReadyEvent> {
     // Start the Discord App
     this.processManager.connect();
 
-    // Start the PubSub listener
-    this.pubSubManager.startListening();
+    // Activate the PubSub Publishers and Subscribers
+    this.pubSubManager.activate();
   }
 }
