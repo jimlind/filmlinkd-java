@@ -31,7 +31,7 @@ public class UserFactory {
       user.image = new ImageHelper(member.avatar).getTallest();
       user.letterboxdId = member.id;
       user.updated = 0L; // TODO: Should this get filled?
-      user.userName = member.username;
+      user.userName = member.username.toLowerCase();
 
       return this.fillDefaults(user);
     } catch (Exception e) {

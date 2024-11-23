@@ -26,6 +26,6 @@ public class EmbedUser {
       }
     }
 
-    return this.userName;
+    return this.userName.toLowerCase();
   }
 }
