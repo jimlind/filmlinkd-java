@@ -10,6 +10,10 @@ public class MemberAPI {
   @Autowired private Client client;
 
   public LBMember fetch(String userLID) {
+    if (userLID.isBlank()) {
+      return null;
+    }
+
     String memberDetailsPath = String.format("member/%s", userLID);
     ResponseEntity<LBMember> memberDetailsResponse =
         this.client.getAuthorized(memberDetailsPath, LBMember.class);

@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class MemberWeb {
   public String getMemberLIDFromUsername(String username) {
-    String url = String.format("https://letterboxd.com/%s/", username);
+    String url = String.format("https://letterboxd.com/%s/", username.toLowerCase());
 
     try {
       ResponseEntity<Void> response =

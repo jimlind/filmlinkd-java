@@ -145,7 +145,7 @@ public class DiscordListener extends ListenerAdapter {
     log.atInfo()
         .setMessage("Entry Publish Delay")
         .addKeyValue("delay", Instant.now().toEpochMilli() - entry.publishedDate)
-        .addKeyValue("source", entry.publishSource)
+        .addKeyValue("source", entry.publishSource.toString())
         .log();
 
     // Log a too much information about the successfully sent message
