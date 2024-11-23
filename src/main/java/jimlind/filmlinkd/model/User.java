@@ -52,6 +52,10 @@ public class User {
   }
 
   public String getMostRecentPrevious() {
+    if (previous.list.isEmpty()) {
+      return "";
+    }
+
     return previous.list.get(previous.list.size() - 1);
   }
 

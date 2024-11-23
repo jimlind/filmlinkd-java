@@ -59,11 +59,10 @@ Achievements of this project right now.
 - Add authorized request logic
 - Command for /follow
 - Patch some capitalization
+- Patch user not found bug and publish delay bug and previous index bug
 
 Next.
 
-- GET error seems to have broken things.
-- Publish Delay seems to not work
 - unfollow
 - refresh
 - diary
