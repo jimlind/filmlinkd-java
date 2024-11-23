@@ -62,6 +62,8 @@ Achievements of this project right now.
 
 Next.
 
+- GET error seems to have broken things.
+- Publish Delay seems to not work
 - unfollow
 - refresh
 - diary

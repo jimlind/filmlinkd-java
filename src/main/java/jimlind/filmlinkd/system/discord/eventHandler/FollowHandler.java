@@ -1,7 +1,6 @@
 package jimlind.filmlinkd.system.discord.eventHandler;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -54,12 +53,6 @@ public class FollowHandler implements Handler {
 
     String userLID = this.memberWeb.getMemberLIDFromUsername(accountMap.getAsString());
     LBMember member = this.memberAPI.fetch(userLID);
-
-    System.out.println(member);
-
-    Gson gson = new Gson();
-    String json = gson.toJson(member);
-    System.out.println(json);
 
     if (member == null) {
       // TODO: Log empty response
