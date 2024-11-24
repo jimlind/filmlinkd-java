@@ -5,6 +5,7 @@ import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Payload;
 import com.google.cloud.logging.logback.LoggingEventEnhancer;
 import com.google.gson.Gson;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import org.slf4j.event.KeyValuePair;
@@ -22,7 +23,7 @@ public class LoggingEnhancer implements LoggingEventEnhancer {
     HashMap<String, Object> metadata = new HashMap<>();
     if (valueList != null) {
       for (KeyValuePair pair : valueList) {
-        metadata.put(pair.key, parseValue(pair.value));
+        metadata.put(pair.key, limitLength(parseValue(pair.value)));
       }
       map.put("metadata", metadata);
     }
@@ -53,5 +54,15 @@ public class LoggingEnhancer implements LoggingEventEnhancer {
     } catch (Exception e) {
       return e.toString();
     }
+  }
+
+  private Object limitLength(Object input) {
+    if (input instanceof String) {
+      byte[] inputBytes = ((String) input).getBytes(StandardCharsets.UTF_8);
+      if (inputBytes.length > 128000) {
+        return new String(inputBytes, 0, 128000, StandardCharsets.UTF_8);
+      }
+    }
+    return input;
   }
 }
