@@ -6,8 +6,8 @@ import jimlind.filmlinkd.system.letterboxd.model.LBFilmStatistics;
 import jimlind.filmlinkd.system.letterboxd.model.LBFilmSummary;
 import jimlind.filmlinkd.system.letterboxd.model.LBSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 
 @Component
 public class FilmAPI {
@@ -16,37 +16,34 @@ public class FilmAPI {
   public CombinedLBFilmModel fetch(String searchTerm) {
     // Search for the film by name
     String uriTemplate = "search/?input=%s&include=%s&perPage=%s&searchMethod=%s";
-    String searchPath = String.format(uriTemplate, searchTerm, "FilmSearchItem", 1, "Autocomplete");
+    String input = UriUtils.encodePath(searchTerm, "UTF-8");
+    String searchPath = String.format(uriTemplate, input, "FilmSearchItem", 1, "Autocomplete");
 
-    ResponseEntity<LBSearchResponse> searchResponse =
-        this.client.get(searchPath, LBSearchResponse.class);
-    if (searchResponse == null
-        || searchResponse.getBody() == null
-        || searchResponse.getBody().items.isEmpty()) {
+    LBSearchResponse searchResponse = this.client.get(searchPath, LBSearchResponse.class);
+    if (searchResponse == null) {
       return null;
     }
 
-    LBFilmSummary filmSummary = searchResponse.getBody().items.get(0).film;
+    LBFilmSummary filmSummary = searchResponse.items.get(0).film;
 
     // Load film details
     String filmDetailsPath = String.format("film/%s", filmSummary.id);
-    ResponseEntity<LBFilm> filmDetailsResponse =
-        this.client.getAuthorized(filmDetailsPath, LBFilm.class);
-    if (filmDetailsResponse == null || filmDetailsResponse.getBody() == null) {
+    LBFilm filmDetailsResponse = this.client.getAuthorized(filmDetailsPath, LBFilm.class);
+    if (filmDetailsResponse == null) {
       return null;
     }
 
     // Load film statistics
     String filmStatisticsPath = String.format("film/%s/statistics", filmSummary.id);
-    ResponseEntity<LBFilmStatistics> filmStatisticsResponse =
+    LBFilmStatistics filmStatisticsResponse =
         this.client.getAuthorized(filmStatisticsPath, LBFilmStatistics.class);
-    if (filmStatisticsResponse == null || filmStatisticsResponse.getBody() == null) {
+    if (filmStatisticsResponse == null) {
       return null;
     }
 
     CombinedLBFilmModel combinedLBFilmModel = new CombinedLBFilmModel();
-    combinedLBFilmModel.film = filmDetailsResponse.getBody();
-    combinedLBFilmModel.filmStatistics = filmStatisticsResponse.getBody();
+    combinedLBFilmModel.film = filmDetailsResponse;
+    combinedLBFilmModel.filmStatistics = filmStatisticsResponse;
     combinedLBFilmModel.filmSummary = filmSummary;
 
     return combinedLBFilmModel;
