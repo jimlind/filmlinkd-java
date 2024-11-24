@@ -25,7 +25,7 @@ public class LBFilm {
   public String tagline;
   public String description;
   public LBImage backdrop;
-  public long backdropFocalPoint;
+  public float backdropFocalPoint;
   // trailer - FilmTrailer
   @FirstParty public List<LBCountry> countries;
   @Deprecated public LBLanguage originalLanguage;
