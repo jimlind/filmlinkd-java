@@ -26,7 +26,8 @@ public class User {
   }
 
   public static class Previous {
-    @Deprecated public String id;
+    // This `id` is sometimes a string and sometimes a number. It is totally useless data.
+    @Deprecated public Object id;
     public String lid;
     public ArrayList<String> list;
     public Long published;
