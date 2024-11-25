@@ -73,6 +73,7 @@ public class DiscordListener extends ListenerAdapter {
                   .setMessage("Creating Diary Entry Embed Failed")
                   .addKeyValue("message", message)
                   .addKeyValue("user", user)
+                  .addKeyValue("exception", e)
                   .log();
               return;
             }
