@@ -1,12 +1,10 @@
 package jimlind.filmlinkd.system.letterboxd.api;
 
+import java.util.List;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntriesResponse;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class LogEntriesAPI {
@@ -16,15 +14,13 @@ public class LogEntriesAPI {
     String uriTemplate = "log-entries/?member=%s&memberRelationship=%s&perPage=%s";
     String logEntriesPath = String.format(uriTemplate, userId, "Owner", count);
 
-    ResponseEntity<LBLogEntriesResponse> logEntriesResponse =
+    LBLogEntriesResponse logEntriesResponse =
         this.client.getAuthorized(logEntriesPath, LBLogEntriesResponse.class);
 
-    if (logEntriesResponse == null
-        || logEntriesResponse.getBody() == null
-        || logEntriesResponse.getBody().items.isEmpty()) {
+    if (logEntriesResponse == null || logEntriesResponse.items.isEmpty()) {
       return List.of();
     }
 
-    return logEntriesResponse.getBody().items;
+    return logEntriesResponse.items;
   }
 }

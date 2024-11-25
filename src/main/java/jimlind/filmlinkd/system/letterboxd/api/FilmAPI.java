@@ -20,7 +20,7 @@ public class FilmAPI {
     String searchPath = String.format(uriTemplate, input, "FilmSearchItem", 1, "Autocomplete");
 
     LBSearchResponse searchResponse = this.client.get(searchPath, LBSearchResponse.class);
-    if (searchResponse == null) {
+    if (searchResponse == null || searchResponse.items.isEmpty()) {
       return null;
     }
 

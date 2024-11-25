@@ -2,8 +2,8 @@ package jimlind.filmlinkd.system.letterboxd.api;
 
 import jimlind.filmlinkd.system.letterboxd.model.LBSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 
 @Component
 public class ContributorAPI {
@@ -11,13 +11,14 @@ public class ContributorAPI {
 
   public LBSearchResponse fetch(String searchTerm) {
     String uriTemplate = "search/?input=%s&include=%s&perPage=%s";
-    String path = String.format(uriTemplate, searchTerm, "ContributorSearchItem", 1);
+    String input = UriUtils.encodePath(searchTerm, "UTF-8");
+    String path = String.format(uriTemplate, input, "ContributorSearchItem", 1);
 
-    ResponseEntity<LBSearchResponse> response = this.client.get(path, LBSearchResponse.class);
-    if (response == null || response.getBody() == null || response.getBody().items.isEmpty()) {
+    LBSearchResponse searchResponse = this.client.get(path, LBSearchResponse.class);
+    if (searchResponse == null || searchResponse.items.isEmpty()) {
       return null;
     }
 
-    return response.getBody();
+    return searchResponse;
   }
 }
