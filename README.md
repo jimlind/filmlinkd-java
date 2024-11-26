@@ -61,12 +61,11 @@ Achievements of this project right now.
 - Patch some capitalization
 - Patch user not found bug and publish delay bug and previous index bug
 - Command for /unfollow
+- Command for /refresh
 
 Next.
 
-- refresh
 - diary
-- film
 - list
 - logged
 - roulette

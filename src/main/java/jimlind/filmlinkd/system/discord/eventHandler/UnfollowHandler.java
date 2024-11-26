@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnfollowHandler implements Handler {
   @Autowired private FirestoreManager firestoreManager;
-  @Autowired private UnfollowEmbedFactory unfollowEmbedFactory;
   @Autowired private MemberAPI memberAPI;
   @Autowired private MemberWeb memberWeb;
+  @Autowired private UnfollowEmbedFactory unfollowEmbedFactory;
 
   public String getEventName() {
     return "unfollow";

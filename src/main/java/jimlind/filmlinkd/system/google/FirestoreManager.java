@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.letterboxd.ImageHelper;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
 import lombok.extern.slf4j.Slf4j;
@@ -140,6 +141,32 @@ public class FirestoreManager {
           .addKeyValue("user", user)
           .addKeyValue("channelId", channelId)
           .addKeyValue("exception", e)
+          .log();
+      return false;
+    }
+
+    return true;
+  }
+
+  public boolean updateUserDisplayData(LBMember member) {
+    // Create user but also save snapshot to update with
+    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(member.id);
+    User user = this.userFactory.createFromSnapshot(snapshot);
+    if (snapshot == null || user == null) {
+      return false;
+    }
+
+    user.displayName = member.displayName;
+    user.image = new ImageHelper(member.avatar).getTallest();
+    user.userName = member.username;
+
+    // Perform the update
+    try {
+      snapshot.getReference().update(user.toMap());
+    } catch (Exception e) {
+      log.atError()
+          .setMessage("Unable to Update Display Data: Update Failed")
+          .addKeyValue("user", user)
           .log();
       return false;
     }
