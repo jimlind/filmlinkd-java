@@ -60,10 +60,10 @@ Achievements of this project right now.
 - Command for /follow
 - Patch some capitalization
 - Patch user not found bug and publish delay bug and previous index bug
+- Command for /unfollow
 
 Next.
 
-- unfollow
 - refresh
 - diary
 - film

@@ -3,14 +3,13 @@ package jimlind.filmlinkd.system.discord.eventHandler;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jimlind.filmlinkd.factory.MessageFactory;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.FollowEmbedFactory;
 import jimlind.filmlinkd.model.Command;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.discord.ChannelHelper;
 import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.google.PubSubManager;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
@@ -19,9 +18,7 @@ import jimlind.filmlinkd.system.letterboxd.api.MemberAPI;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntry;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
 import jimlind.filmlinkd.system.letterboxd.web.MemberWeb;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +58,7 @@ public class FollowHandler implements Handler {
       return;
     }
 
-    String channelId = this.getChannelId(event);
+    String channelId = ChannelHelper.getChannelId(event);
     if (channelId.isBlank()) {
       // TODO: Log empty response
       // TODO: Extract the no results to another method
@@ -81,7 +78,7 @@ public class FollowHandler implements Handler {
     if (!this.firestoreManager.addUserSubscription(member.id, channelId)) {
       // TODO: Log something maybe
       // TODO: Extract failure messages to another method
-      event.getHook().sendMessage("Subscribe Failed").queue();
+      event.getHook().sendMessage("Follow Failed").queue();
       return;
     }
 
@@ -107,30 +104,5 @@ public class FollowHandler implements Handler {
 
     ArrayList<MessageEmbed> messageEmbedList = this.followEmbedFactory.create(member);
     event.getHook().sendMessageEmbeds(messageEmbedList).queue();
-  }
-
-  private String getChannelId(SlashCommandInteractionEvent event) {
-    OptionMapping channelMap = event.getInteraction().getOption("channel");
-    if (channelMap == null) {
-      return event.getChannelId();
-    }
-
-    String channelString = channelMap.getAsString();
-    Pattern pattern = Pattern.compile("^<#(\\d+)>$");
-    Matcher matcher = pattern.matcher(channelString);
-    if (matcher.find()) {
-      return matcher.group(1);
-    }
-
-    Guild guild = event.getGuild();
-    if (guild == null) {
-      return "";
-    }
-    List<TextChannel> channelList = guild.getTextChannelsByName(channelString, true);
-    if (channelList.isEmpty()) {
-      return "";
-    }
-
-    return channelList.get(0).getId();
   }
 }

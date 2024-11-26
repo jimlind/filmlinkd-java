@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import jimlind.filmlinkd.Config;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.model.User;
@@ -86,7 +87,6 @@ public class FirestoreManager {
     QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(userLID);
     User user = this.userFactory.createFromSnapshot(snapshot);
     if (snapshot == null || user == null) {
-      System.out.println("user doesn't exist");
       return false;
     }
 
@@ -107,11 +107,11 @@ public class FirestoreManager {
     try {
       snapshot.getReference().update(user.toMap());
     } catch (Exception e) {
-      System.out.println(e);
       log.atError()
-          .setMessage("Unable to Update Channel List: Update Failed")
+          .setMessage("Unable to Add to Channel List: Update Failed")
           .addKeyValue("user", user)
           .addKeyValue("channelId", channelId)
+          .addKeyValue("exception", e)
           .log();
       return false;
     }
@@ -120,8 +120,31 @@ public class FirestoreManager {
   }
 
   public boolean removeUserSubscription(String userLID, String channelId) {
-    // TODO: Fill this out
-    return false;
+    // Create user but also save snapshot to update with
+    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(userLID);
+    User user = this.userFactory.createFromSnapshot(snapshot);
+    if (snapshot == null || user == null) {
+      return false;
+    }
+
+    user.channelList =
+        user.channelList.stream()
+            .filter(channel -> !channel.channelId.equals(channelId))
+            .collect(Collectors.toCollection(ArrayList::new));
+
+    try {
+      snapshot.getReference().update(user.toMap());
+    } catch (Exception e) {
+      log.atError()
+          .setMessage("Unable to Remove from Channel List: Update Failed")
+          .addKeyValue("user", user)
+          .addKeyValue("channelId", channelId)
+          .addKeyValue("exception", e)
+          .log();
+      return false;
+    }
+
+    return true;
   }
 
   public boolean updateUserPrevious(
