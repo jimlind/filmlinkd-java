@@ -24,18 +24,18 @@ public class Message {
     public String userLid;
     public Message.Type type;
     public String link;
-    public Long publishedDate;
+    public long publishedDate;
     public String filmTitle;
     public Integer filmYear;
-    public Long watchedDate;
+    public long watchedDate;
     public String image;
-    public Float starCount;
+    public float starCount;
     public Boolean rewatch;
     public Boolean liked;
     public Boolean containsSpoilers;
     public Boolean adult;
     public String review;
-    public Long updatedDate;
+    public long updatedDate;
     public Message.PublishSource publishSource;
   }
 

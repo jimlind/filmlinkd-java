@@ -8,8 +8,8 @@ import java.util.Map;
 public class User {
   public String id;
 
-  public Long checked;
-  public Long created;
+  public long checked;
+  public long created;
   public String displayName;
   public String image;
   public String letterboxdId;
@@ -30,7 +30,7 @@ public class User {
     @Deprecated public Object id;
     public String lid;
     public ArrayList<String> list;
-    public Long published;
+    public long published;
     public String uri;
   }
 

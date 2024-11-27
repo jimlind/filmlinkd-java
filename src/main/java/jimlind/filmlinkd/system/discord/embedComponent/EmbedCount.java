@@ -1,9 +1,9 @@
 package jimlind.filmlinkd.system.discord.embedComponent;
 
 public class EmbedCount {
-  private final Long count;
+  private final long count;
 
-  public EmbedCount(Long count) {
+  public EmbedCount(long count) {
     this.count = count;
   }
 

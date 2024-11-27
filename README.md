@@ -63,6 +63,7 @@ Achievements of this project right now.
 - Command for /unfollow
 - Command for /refresh
 - Command for /diary
+- Patch some Long and Float objects
 
 Next.
 
@@ -72,7 +73,6 @@ Next.
 - user
 - make the error and not found messages ephemeral
 - todos for error and not found message consolidation
-- there are a bunch of Long and Float objects scattered around instead of primitives
 - ensure caught issues send messages to users
 - support channel option for follow/unfollow/following
 
