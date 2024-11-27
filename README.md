@@ -64,10 +64,10 @@ Achievements of this project right now.
 - Command for /refresh
 - Command for /diary
 - Patch some Long and Float objects
+- Command for /list
 
 Next.
 
-- list
 - logged
 - roulette
 - user
@@ -75,6 +75,7 @@ Next.
 - todos for error and not found message consolidation
 - ensure caught issues send messages to users
 - support channel option for follow/unfollow/following
+- support debug on help command
 
 Open Larger Bugs.
 
