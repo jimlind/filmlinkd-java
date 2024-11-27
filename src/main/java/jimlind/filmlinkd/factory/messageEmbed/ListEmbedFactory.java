@@ -25,7 +25,7 @@ public class ListEmbedFactory {
     StringBuilder descriptionText =
         new StringBuilder(
             String.format(
-                "**List of %s films curated by [%s](https://boxd.it/%s)**\n",
+                "**List of %s films curated by [%s](https://boxd.it/%s)**\n\n",
                 listSummary.filmCount, listSummary.owner.displayName, listSummary.owner.id));
 
     Options options = OptionsBuilder.anOptions().withBr("\n").build();
