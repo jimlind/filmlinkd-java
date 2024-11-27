@@ -25,10 +25,12 @@ public class MessageFactory {
     message.entry.publishedDate = new DateHelper(logEntry.whenCreated).getMilli();
     message.entry.filmTitle = logEntry.film.name;
     message.entry.filmYear = logEntry.film.releaseYear;
-    message.entry.watchedDate = new DateHelper(logEntry.diaryDetails.diaryDate).getMilli();
+    message.entry.watchedDate =
+        new DateHelper(logEntry.diaryDetails != null ? logEntry.diaryDetails.diaryDate : "")
+            .getMilli();
     message.entry.image = new ImageHelper(logEntry.film.poster).getTallest();
     message.entry.starCount = logEntry.rating;
-    message.entry.rewatch = logEntry.diaryDetails.rewatch;
+    message.entry.rewatch = logEntry.diaryDetails != null && logEntry.diaryDetails.rewatch;
     message.entry.liked = logEntry.like;
     message.entry.containsSpoilers = logEntry.review != null && logEntry.review.containsSpoilers;
     message.entry.adult = logEntry.film.adult;

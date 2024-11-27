@@ -36,7 +36,7 @@ public class DiaryEntryEmbedFactory {
 
     // Build the Review Title
     String reviewTitle = "";
-    if (message.entry.watchedDate != null) {
+    if (message.entry.watchedDate != 0) {
       String pattern =
           Instant.now().toEpochMilli() - message.entry.watchedDate < 5000000000L
               ? "**MMM dd**"
