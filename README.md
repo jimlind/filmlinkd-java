@@ -62,10 +62,10 @@ Achievements of this project right now.
 - Patch user not found bug and publish delay bug and previous index bug
 - Command for /unfollow
 - Command for /refresh
+- Command for /diary
 
 Next.
 
-- diary
 - list
 - logged
 - roulette

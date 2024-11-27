@@ -10,7 +10,7 @@ public class LBLogEntry {
   public String name;
   public LBMemberSummary owner;
   public LBFilmSummary film;
-  public LBDiaryDetails diaryDetails;
+  @Nullable public LBDiaryDetails diaryDetails;
   @Nullable public LBReview review;
   @Deprecated public List<String> tags;
   public List<LBTag> tags2;
