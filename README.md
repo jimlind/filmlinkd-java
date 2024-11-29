@@ -65,10 +65,10 @@ Achievements of this project right now.
 - Command for /diary
 - Patch some Long and Float objects
 - Command for /list
+- Command for /logged
 
 Next.
 
-- logged
 - roulette
 - user
 - make the error and not found messages ephemeral
