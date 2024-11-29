@@ -15,6 +15,7 @@ import jimlind.filmlinkd.system.letterboxd.ImageHelper;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +50,7 @@ public class FirestoreManager {
     }
   }
 
-  public QueryDocumentSnapshot getUserDocument(String userLID) {
+  public @Nullable QueryDocumentSnapshot getUserDocument(String userLID) {
     String collectionId = this.config.getFirestoreCollectionId();
     ApiFuture<QuerySnapshot> query =
         this.db.collection(collectionId).whereEqualTo("letterboxdId", userLID).limit(1).get();
@@ -85,7 +86,7 @@ public class FirestoreManager {
 
   public boolean addUserSubscription(String userLID, String channelId) {
     // Create user but also save snapshot to update with
-    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(userLID);
+    QueryDocumentSnapshot snapshot = this.getUserDocument(userLID);
     User user = this.userFactory.createFromSnapshot(snapshot);
     if (snapshot == null || user == null) {
       return false;
@@ -122,7 +123,7 @@ public class FirestoreManager {
 
   public boolean removeUserSubscription(String userLID, String channelId) {
     // Create user but also save snapshot to update with
-    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(userLID);
+    QueryDocumentSnapshot snapshot = this.getUserDocument(userLID);
     User user = this.userFactory.createFromSnapshot(snapshot);
     if (snapshot == null || user == null) {
       return false;
@@ -150,7 +151,7 @@ public class FirestoreManager {
 
   public boolean updateUserDisplayData(LBMember member) {
     // Create user but also save snapshot to update with
-    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(member.id);
+    QueryDocumentSnapshot snapshot = this.getUserDocument(member.id);
     User user = this.userFactory.createFromSnapshot(snapshot);
     if (snapshot == null || user == null) {
       return false;
@@ -178,7 +179,7 @@ public class FirestoreManager {
       String userLID, String diaryLID, long diaryPublishedDate, String diaryURI) {
 
     // Create user but also save snapshot to update with
-    QueryDocumentSnapshot snapshot = this.loadDocumentSnapshotByUserLID(userLID);
+    QueryDocumentSnapshot snapshot = this.getUserDocument(userLID);
     User user = this.userFactory.createFromSnapshot(snapshot);
     if (snapshot == null || user == null) {
       return false;
@@ -216,18 +217,5 @@ public class FirestoreManager {
     }
 
     return true;
-  }
-
-  private QueryDocumentSnapshot loadDocumentSnapshotByUserLID(String userLID) {
-    QueryDocumentSnapshot snapshot = getUserDocument(userLID);
-    if (snapshot == null) {
-      log.atWarn()
-          .setMessage("Unable to Load Document: User Not Found")
-          .addKeyValue("userLID", userLID)
-          .log();
-      return null;
-    }
-
-    return snapshot;
   }
 }
