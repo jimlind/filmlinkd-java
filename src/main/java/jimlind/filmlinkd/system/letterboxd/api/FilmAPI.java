@@ -13,7 +13,7 @@ import org.springframework.web.util.UriUtils;
 public class FilmAPI {
   @Autowired private Client client;
 
-  public CombinedLBFilmModel fetch(String searchTerm) {
+  public LBFilmSummary search(String searchTerm) {
     // Search for the film by name
     String uriTemplate = "search/?input=%s&include=%s&perPage=%s&searchMethod=%s";
     String input = UriUtils.encodePath(searchTerm, "UTF-8");
@@ -24,7 +24,15 @@ public class FilmAPI {
       return null;
     }
 
-    LBFilmSummary filmSummary = searchResponse.items.get(0).film;
+    return searchResponse.items.get(0).film;
+  }
+
+  public CombinedLBFilmModel fetch(String searchTerm) {
+    // Load film summary
+    LBFilmSummary filmSummary = this.search(searchTerm);
+    if (filmSummary == null) {
+      return null;
+    }
 
     // Load film details
     String filmDetailsPath = String.format("film/%s", filmSummary.id);
