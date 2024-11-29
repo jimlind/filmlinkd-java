@@ -7,5 +7,5 @@ public class LBMemberStatistics {
   public LBMemberIdentifier member;
   public LBMemberStatisticsCounts counts;
   public List<LBRatingsHistogramBar> ratingsHistogram;
-  public int yearsInReview;
+  public List<Integer> yearsInReview;
 }
