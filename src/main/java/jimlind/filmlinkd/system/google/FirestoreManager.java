@@ -222,7 +222,7 @@ public class FirestoreManager {
     QueryDocumentSnapshot snapshot = getUserDocument(userLID);
     if (snapshot == null) {
       log.atWarn()
-          .setMessage("Unable to Update Previous: User Not Found")
+          .setMessage("Unable to Load Document: User Not Found")
           .addKeyValue("userLID", userLID)
           .log();
       return null;
