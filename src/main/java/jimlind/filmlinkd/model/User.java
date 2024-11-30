@@ -53,7 +53,7 @@ public class User {
   }
 
   public String getMostRecentPrevious() {
-    if (previous.list.isEmpty()) {
+    if (previous.list == null || previous.list.isEmpty()) {
       return "";
     }
 
