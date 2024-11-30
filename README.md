@@ -66,6 +66,7 @@ Achievements of this project right now.
 - Patch some Long and Float objects
 - Command for /list
 - Command for /logged
+- Command for /user
 
 Next.
 
