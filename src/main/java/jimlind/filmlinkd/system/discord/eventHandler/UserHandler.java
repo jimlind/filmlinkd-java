@@ -27,9 +27,8 @@ public class UserHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    OptionMapping accountMap = event.getInteraction().getOption("account");
-    String accountAsString = accountMap != null ? accountMap.getAsString() : "";
-
+    OptionMapping optionMapping = event.getInteraction().getOption("account");
+    String accountAsString = optionMapping != null ? optionMapping.getAsString() : "";
     String userLID = this.memberWeb.getMemberLIDFromUsername(accountAsString);
     LBMember member = this.memberAPI.fetch(userLID);
     LBMemberStatistics memberStatistics = this.memberStatisticsAPI.fetch(userLID);

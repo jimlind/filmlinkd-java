@@ -26,15 +26,9 @@ public class RefreshHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    OptionMapping accountMap = event.getInteraction().getOption("account");
-    if (accountMap == null) {
-      // TODO: Log Error
-      // TODO: Extract the error to another method
-      event.getHook().sendMessage("Error").queue();
-      return;
-    }
-
-    String userLID = this.memberWeb.getMemberLIDFromUsername(accountMap.getAsString());
+    OptionMapping optionMapping = event.getInteraction().getOption("account");
+    String username = optionMapping != null ? optionMapping.getAsString() : "";
+    String userLID = this.memberWeb.getMemberLIDFromUsername(username);
     LBMember member = this.memberAPI.fetch(userLID);
 
     if (member == null) {

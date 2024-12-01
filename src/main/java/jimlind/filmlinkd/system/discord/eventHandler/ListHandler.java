@@ -32,14 +32,8 @@ public class ListHandler implements Handler {
     event.deferReply().queue();
 
     OptionMapping accountMap = event.getInteraction().getOption("account");
-    if (accountMap == null) {
-      // TODO: Log Error
-      // TODO: Extract the error to another method
-      event.getHook().sendMessage("Error").queue();
-      return;
-    }
-
-    String userLID = this.memberWeb.getMemberLIDFromUsername(accountMap.getAsString());
+    String username = accountMap != null ? accountMap.getAsString() : "";
+    String userLID = this.memberWeb.getMemberLIDFromUsername(username);
     LBMember member = this.memberAPI.fetch(userLID);
 
     if (member == null) {

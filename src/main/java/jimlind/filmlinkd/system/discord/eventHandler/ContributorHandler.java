@@ -24,14 +24,9 @@ public class ContributorHandler implements Handler {
     event.deferReply().queue();
 
     OptionMapping optionMapping = event.getInteraction().getOption("contributor-name");
-    if (optionMapping == null) {
-      // TODO: Log Error
-      // TODO: Extract the error to another method
-      event.getHook().sendMessage("Error").queue();
-      return;
-    }
+    String contributorName = optionMapping != null ? optionMapping.getAsString() : "";
+    LBSearchResponse searchResponse = this.contributorAPI.fetch(contributorName);
 
-    LBSearchResponse searchResponse = this.contributorAPI.fetch(optionMapping.getAsString());
     if (searchResponse == null) {
       // TODO: Log empty response
       // TODO: Extract the no results to another method

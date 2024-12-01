@@ -41,14 +41,8 @@ public class FollowHandler implements Handler {
     event.deferReply().queue();
 
     OptionMapping accountMap = event.getInteraction().getOption("account");
-    if (accountMap == null) {
-      // TODO: Log Error
-      // TODO: Extract the error to another method
-      event.getHook().sendMessage("Error").queue();
-      return;
-    }
-
-    String userLID = this.memberWeb.getMemberLIDFromUsername(accountMap.getAsString());
+    String userName = accountMap != null ? accountMap.toString() : "";
+    String userLID = this.memberWeb.getMemberLIDFromUsername(userName);
     LBMember member = this.memberAPI.fetch(userLID);
 
     if (member == null) {

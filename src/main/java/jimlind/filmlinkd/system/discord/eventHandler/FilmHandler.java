@@ -23,14 +23,9 @@ public class FilmHandler implements Handler {
     event.deferReply().queue();
 
     OptionMapping optionMapping = event.getInteraction().getOption("film-name");
-    if (optionMapping == null) {
-      // TODO: Log Error
-      // TODO: Extract the error to another method
-      event.getHook().sendMessage("Error").queue();
-      return;
-    }
+    String filmName = optionMapping != null ? optionMapping.getAsString() : "";
+    CombinedLBFilmModel combinedLBFilmModel = this.filmAPI.fetch(filmName);
 
-    CombinedLBFilmModel combinedLBFilmModel = this.filmAPI.fetch(optionMapping.getAsString());
     if (combinedLBFilmModel == null) {
       // TODO: Log empty response
       // TODO: Extract the no results to another method

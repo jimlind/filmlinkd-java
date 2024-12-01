@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import jimlind.filmlinkd.factory.UserFactory;
 import jimlind.filmlinkd.factory.messageEmbed.FollowingEmbedFactory;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.discord.ChannelHelper;
 import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -27,7 +28,14 @@ public class FollowingHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    String channelId = event.getChannelId();
+    String channelId = ChannelHelper.getChannelId(event);
+    if (channelId.isBlank()) {
+      // TODO: Log empty response
+      // TODO: Extract the no results to another method
+      event.getHook().sendMessage("Channel Not Found").queue();
+      return;
+    }
+
     List<QueryDocumentSnapshot> documentList =
         this.firestoreManager.getUserDocumentListByChannelId(channelId);
 
