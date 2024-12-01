@@ -71,7 +71,6 @@ Achievements of this project right now.
 
 Next.
 
-- make the error and not found messages ephemeral
 - todos for error and not found message consolidation
 - ensure caught issues send messages to users
 - support channel option for follow/unfollow/following
