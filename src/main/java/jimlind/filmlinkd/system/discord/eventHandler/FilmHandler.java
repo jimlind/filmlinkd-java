@@ -27,9 +27,7 @@ public class FilmHandler implements Handler {
     CombinedLBFilmModel combinedLBFilmModel = this.filmAPI.fetch(filmName);
 
     if (combinedLBFilmModel == null) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("No Results Found").queue();
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 

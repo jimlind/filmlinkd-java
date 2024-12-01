@@ -30,9 +30,7 @@ public class FollowingHandler implements Handler {
 
     String channelId = ChannelHelper.getChannelId(event);
     if (channelId.isBlank()) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("Channel Not Found").queue();
+      event.getHook().sendMessage(NO_CHANNEL_FOUND).queue();
       return;
     }
 

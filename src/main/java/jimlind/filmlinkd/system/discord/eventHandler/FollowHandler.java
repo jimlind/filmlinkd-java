@@ -46,17 +46,13 @@ public class FollowHandler implements Handler {
     LBMember member = this.memberAPI.fetch(userLID);
 
     if (member == null) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("No Results Found").queue();
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 
     String channelId = ChannelHelper.getChannelId(event);
     if (channelId.isBlank()) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("Channel Not Found").queue();
+      event.getHook().sendMessage(NO_CHANNEL_FOUND).queue();
       return;
     }
 
@@ -70,8 +66,6 @@ public class FollowHandler implements Handler {
     }
 
     if (!this.firestoreManager.addUserSubscription(member.id, channelId)) {
-      // TODO: Log something maybe
-      // TODO: Extract failure messages to another method
       event.getHook().sendMessage("Follow Failed").queue();
       return;
     }

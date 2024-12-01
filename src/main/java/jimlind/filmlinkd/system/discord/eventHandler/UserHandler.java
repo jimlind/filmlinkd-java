@@ -34,9 +34,7 @@ public class UserHandler implements Handler {
     LBMemberStatistics memberStatistics = this.memberStatisticsAPI.fetch(userLID);
 
     if (member == null || memberStatistics == null) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("No Results Found").queue();
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 

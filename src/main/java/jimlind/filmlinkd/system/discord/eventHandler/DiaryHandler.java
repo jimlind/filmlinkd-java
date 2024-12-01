@@ -32,17 +32,10 @@ public class DiaryHandler implements Handler {
     String username = optionMapping != null ? optionMapping.getAsString() : "";
     String userLID = this.memberWeb.getMemberLIDFromUsername(username);
     LBMember member = this.memberAPI.fetch(userLID);
-
-    if (member == null) {
-      // TODO: Log empty response
-      // TODO: Extract the no results to another method
-      event.getHook().sendMessage("No Results Found").queue();
-      return;
-    }
-
     List<LBLogEntry> logEntryList = this.logEntriesAPI.getRecentForUser(userLID, 5);
-    if (logEntryList.isEmpty()) {
-      event.getHook().sendMessage("No Results Found").queue();
+
+    if (member == null || logEntryList.isEmpty()) {
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 

@@ -42,13 +42,13 @@ public class LoggedHandler implements Handler {
     LBFilmSummary film = this.filmAPI.search(filmAsString);
 
     if (member == null || film == null) {
-      event.getHook().sendMessage("No Results Found").queue();
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 
     List<LBLogEntry> logEntryList = this.logEntriesAPI.getByUserAndFilm(member.id, film.id);
     if (logEntryList.isEmpty()) {
-      event.getHook().sendMessage("No Results Found").queue();
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }
 
