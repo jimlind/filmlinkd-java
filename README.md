@@ -67,11 +67,10 @@ Achievements of this project right now.
 - Command for /list
 - Command for /logged
 - Command for /user
+- Command for /roulette
 
 Next.
 
-- roulette
-- user
 - make the error and not found messages ephemeral
 - todos for error and not found message consolidation
 - ensure caught issues send messages to users
