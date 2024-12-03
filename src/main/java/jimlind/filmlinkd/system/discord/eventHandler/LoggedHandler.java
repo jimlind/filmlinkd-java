@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LoggedHandler implements Handler {
+  @Autowired private AccountHelper accountHelper;
   @Autowired private FilmAPI filmAPI;
   @Autowired private LogEntriesAPI logEntriesAPI;
   @Autowired private LoggedEmbedFactory loggedEmbedFactory;
@@ -28,7 +29,7 @@ public class LoggedHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    LBMember member = new AccountHelper().getMember(event);
+    LBMember member = this.accountHelper.getMember(event);
 
     OptionMapping filmNameMap = event.getInteraction().getOption("film-name");
     String filmAsString = filmNameMap != null ? filmNameMap.getAsString() : "";

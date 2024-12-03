@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserHandler implements Handler {
+  @Autowired private AccountHelper accountHelper;
   @Autowired private MemberStatisticsAPI memberStatisticsAPI;
   @Autowired private UserEmbedFactory userEmbedFactory;
 
@@ -23,7 +24,7 @@ public class UserHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    LBMember member = new AccountHelper().getMember(event);
+    LBMember member = this.accountHelper.getMember(event);
     if (member == null) {
       event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;

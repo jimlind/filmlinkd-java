@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RefreshHandler implements Handler {
+  @Autowired private AccountHelper accountHelper;
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private RefreshEmbedFactory refreshEmbedFactory;
 
@@ -22,7 +23,7 @@ public class RefreshHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    LBMember member = new AccountHelper().getMember(event);
+    LBMember member = this.accountHelper.getMember(event);
     if (member == null) {
       event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;

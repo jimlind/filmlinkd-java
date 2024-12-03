@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ListHandler implements Handler {
+  @Autowired private AccountHelper accountHelper;
   @Autowired private ListAPI listAPI;
   @Autowired private ListEmbedFactory listEmbedFactory;
 
@@ -25,7 +26,7 @@ public class ListHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    LBMember member = new AccountHelper().getMember(event);
+    LBMember member = this.accountHelper.getMember(event);
     if (member == null) {
       event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
