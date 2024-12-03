@@ -2,22 +2,18 @@ package jimlind.filmlinkd.system.discord.eventHandler;
 
 import java.util.ArrayList;
 import jimlind.filmlinkd.factory.messageEmbed.UserEmbedFactory;
-import jimlind.filmlinkd.system.letterboxd.api.MemberAPI;
+import jimlind.filmlinkd.system.discord.AccountHelper;
 import jimlind.filmlinkd.system.letterboxd.api.MemberStatisticsAPI;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
 import jimlind.filmlinkd.system.letterboxd.model.LBMemberStatistics;
-import jimlind.filmlinkd.system.letterboxd.web.MemberWeb;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserHandler implements Handler {
-  @Autowired private MemberAPI memberAPI;
   @Autowired private MemberStatisticsAPI memberStatisticsAPI;
-  @Autowired private MemberWeb memberWeb;
   @Autowired private UserEmbedFactory userEmbedFactory;
 
   public String getEventName() {
@@ -27,13 +23,14 @@ public class UserHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    OptionMapping optionMapping = event.getInteraction().getOption("account");
-    String accountAsString = optionMapping != null ? optionMapping.getAsString() : "";
-    String userLID = this.memberWeb.getMemberLIDFromUsername(accountAsString);
-    LBMember member = this.memberAPI.fetch(userLID);
-    LBMemberStatistics memberStatistics = this.memberStatisticsAPI.fetch(userLID);
+    LBMember member = new AccountHelper().getMember(event);
+    if (member == null) {
+      event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
+      return;
+    }
 
-    if (member == null || memberStatistics == null) {
+    LBMemberStatistics memberStatistics = this.memberStatisticsAPI.fetch(member.id);
+    if (memberStatistics == null) {
       event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
     }

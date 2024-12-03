@@ -1,29 +1,25 @@
 package jimlind.filmlinkd.system.discord.eventHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import jimlind.filmlinkd.factory.messageEmbed.LoggedEmbedFactory;
+import jimlind.filmlinkd.system.discord.AccountHelper;
 import jimlind.filmlinkd.system.letterboxd.api.FilmAPI;
 import jimlind.filmlinkd.system.letterboxd.api.LogEntriesAPI;
-import jimlind.filmlinkd.system.letterboxd.api.MemberAPI;
 import jimlind.filmlinkd.system.letterboxd.model.LBFilmSummary;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntry;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
-import jimlind.filmlinkd.system.letterboxd.web.MemberWeb;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class LoggedHandler implements Handler {
   @Autowired private FilmAPI filmAPI;
   @Autowired private LogEntriesAPI logEntriesAPI;
   @Autowired private LoggedEmbedFactory loggedEmbedFactory;
-  @Autowired private MemberAPI memberAPI;
-  @Autowired private MemberWeb memberWeb;
 
   public String getEventName() {
     return "logged";
@@ -32,10 +28,7 @@ public class LoggedHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    OptionMapping accountMap = event.getInteraction().getOption("account");
-    String accountAsString = accountMap != null ? accountMap.getAsString() : "";
-    String userLID = this.memberWeb.getMemberLIDFromUsername(accountAsString);
-    LBMember member = this.memberAPI.fetch(userLID);
+    LBMember member = new AccountHelper().getMember(event);
 
     OptionMapping filmNameMap = event.getInteraction().getOption("film-name");
     String filmAsString = filmNameMap != null ? filmNameMap.getAsString() : "";

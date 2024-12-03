@@ -9,18 +9,16 @@ import jimlind.filmlinkd.factory.messageEmbed.FollowEmbedFactory;
 import jimlind.filmlinkd.model.Command;
 import jimlind.filmlinkd.model.Message;
 import jimlind.filmlinkd.model.User;
+import jimlind.filmlinkd.system.discord.AccountHelper;
 import jimlind.filmlinkd.system.discord.ChannelHelper;
 import jimlind.filmlinkd.system.google.FirestoreManager;
 import jimlind.filmlinkd.system.google.PubSubManager;
 import jimlind.filmlinkd.system.letterboxd.LidComparer;
 import jimlind.filmlinkd.system.letterboxd.api.LogEntriesAPI;
-import jimlind.filmlinkd.system.letterboxd.api.MemberAPI;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntry;
 import jimlind.filmlinkd.system.letterboxd.model.LBMember;
-import jimlind.filmlinkd.system.letterboxd.web.MemberWeb;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +27,6 @@ public class FollowHandler implements Handler {
   @Autowired private FirestoreManager firestoreManager;
   @Autowired private FollowEmbedFactory followEmbedFactory;
   @Autowired private LogEntriesAPI logEntriesAPI;
-  @Autowired private MemberAPI memberAPI;
-  @Autowired private MemberWeb memberWeb;
   @Autowired private PubSubManager pubSubManager;
 
   public String getEventName() {
@@ -40,11 +36,7 @@ public class FollowHandler implements Handler {
   public void handleEvent(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    OptionMapping accountMap = event.getInteraction().getOption("account");
-    String userName = accountMap != null ? accountMap.toString() : "";
-    String userLID = this.memberWeb.getMemberLIDFromUsername(userName);
-    LBMember member = this.memberAPI.fetch(userLID);
-
+    LBMember member = new AccountHelper().getMember(event);
     if (member == null) {
       event.getHook().sendMessage(NO_RESULTS_FOUND).queue();
       return;
