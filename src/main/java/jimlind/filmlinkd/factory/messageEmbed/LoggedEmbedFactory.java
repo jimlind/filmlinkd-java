@@ -3,15 +3,12 @@ package jimlind.filmlinkd.factory.messageEmbed;
 import io.github.furstenheim.CopyDown;
 import io.github.furstenheim.Options;
 import io.github.furstenheim.OptionsBuilder;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedBuilder;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedDescription;
 import jimlind.filmlinkd.system.discord.embedComponent.EmbedStars;
+import jimlind.filmlinkd.system.letterboxd.DateHelper;
 import jimlind.filmlinkd.system.letterboxd.ImageHelper;
 import jimlind.filmlinkd.system.letterboxd.model.LBLogEntry;
 import jimlind.filmlinkd.system.letterboxd.model.LBReview;
@@ -27,8 +24,18 @@ public class LoggedEmbedFactory {
 
     StringBuilder description = new StringBuilder();
     for (LBLogEntry logEntry : logEntryList) {
-      String action = logEntry.review != null ? "Reviewed" : "Watched";
-      String date = formatDate(logEntry.whenUpdated);
+      String action = "Logged";
+      String date = new DateHelper(logEntry.whenCreated).getFormatted();
+
+      if (logEntry.diaryDetails != null) {
+        action = "Watched";
+        date = new DateHelper(logEntry.diaryDetails.diaryDate).getFormatted();
+      }
+
+      if (logEntry.review != null) {
+        action = "Reviewed";
+      }
+
       description.append(
           String.format("[**%s on %s**](https://boxd.it/%s)\n", action, date, logEntry.id));
 
@@ -60,16 +67,6 @@ public class LoggedEmbedFactory {
     collection.add(embedBuilder.build());
 
     return collection;
-  }
-
-  private static String formatDate(String whenUpdated) {
-    ZonedDateTime dateTime = ZonedDateTime.parse(whenUpdated);
-    long timestamp = dateTime.toInstant().toEpochMilli();
-
-    String pattern =
-        Instant.now().toEpochMilli() - timestamp < 5000000000L ? "MMM dd" : "MMM dd uuu";
-
-    return dateTime.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
   }
 
   private static String formatReview(LBReview review) {
