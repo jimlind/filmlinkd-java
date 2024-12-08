@@ -68,13 +68,8 @@ Achievements of this project right now.
 - Command for /logged
 - Command for /user
 - Command for /roulette
-
-Next.
-
-- todos for error and not found message consolidation
-- ensure caught issues send messages to users
-- support channel option for follow/unfollow/following
-- support debug on help command
+- Follow/Unfollow/Following channels
+- Logid for /help test
 
 Open Larger Bugs.
 
