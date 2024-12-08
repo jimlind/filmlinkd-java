@@ -54,7 +54,7 @@ Let's get dangerous....
 `pack build filmlinkd-java-app --builder=gcr.io/buildpacks/builder:google-22`
 `docker run -it filmlinkd-java-app`
 
-Unfortunatly that doesn't work because it doesn't have the credentials it needs to actually run anything on GCP but the
+Unfortunately that doesn't work because it doesn't have the credentials it needs to actually run anything on GCP but the
 fact that it complains about not having credentials seems promising.
 
 Well, I let Cloud Build run (see the cloudbuild.yaml) and it seems to be fine with the container it created. I deployed
