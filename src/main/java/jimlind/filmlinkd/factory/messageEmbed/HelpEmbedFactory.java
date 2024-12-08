@@ -50,4 +50,49 @@ public class HelpEmbedFactory {
 
     return collection;
   }
+
+  public ArrayList<MessageEmbed> createTestMessage() {
+    return this.createTestMessage(-1);
+  }
+
+  public ArrayList<MessageEmbed> createTestMessage(int step) {
+    EmbedBuilder embedBuilder = new EmbedBuilder();
+    switch (step) {
+      case 0:
+        String basicMessage =
+            "This is a basic embed message.\nNext you should see an embed with a simple emoji.";
+        embedBuilder.setDescription(new EmbedDescription(basicMessage).build());
+        break;
+      case 1:
+        String simpleEmojiMessage =
+            "This is a embed message with simple emoji :star::star::star:.\nNext you should see an embed with a custom emoji.";
+        embedBuilder.setDescription(new EmbedDescription(simpleEmojiMessage).build());
+        break;
+      case 2:
+        String customEmojiMessage =
+            "This is a embed message with custom emoji <:s:851134022251970610><:s:851134022251970610><:s:851134022251970610>.\nNext you should see an embed with a custom emoji.";
+        embedBuilder.setDescription(new EmbedDescription(customEmojiMessage).build());
+        break;
+      case 3:
+        String formattedMessage =
+            "This is a embed message *with* **formatted** ***text***.\nNext you should see an embed with an image.";
+        embedBuilder.setDescription(new EmbedDescription(formattedMessage).build());
+        break;
+      case 4:
+        String imageMessage =
+            "This is a embed message with an image.\nThis concludes this test of the Emergency Broadcast System.";
+        embedBuilder.setDescription(new EmbedDescription(imageMessage).build());
+        embedBuilder.setThumbnail("https://jimlind.github.io/filmlinkd/images/filmlinkd-100.png");
+      default:
+        String introductionText =
+            "This is the first of a series of test messages. If you can see this you know that basic command edit embeds work.\nIf you don't see any of the following messages you need to update your permissions as documented.\nNext you should see a basic embed message.";
+        embedBuilder.setDescription(new EmbedDescription(introductionText).build());
+        break;
+    }
+
+    ArrayList<MessageEmbed> collection = new ArrayList<>();
+    collection.add(embedBuilder.build());
+
+    return collection;
+  }
 }
