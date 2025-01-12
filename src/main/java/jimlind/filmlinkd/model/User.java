@@ -54,7 +54,7 @@ public class User {
 
   public String getMostRecentPrevious() {
     if (previous.list == null || previous.list.isEmpty()) {
-      return "";
+      return previous.lid;
     }
 
     return previous.list.get(previous.list.size() - 1);
