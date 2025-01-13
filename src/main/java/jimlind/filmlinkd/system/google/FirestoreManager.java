@@ -185,7 +185,11 @@ public class FirestoreManager {
       return false;
     }
 
-    ArrayList<String> previousList = user.previous.list;
+    // Default to an empty list, but set it if not null
+    ArrayList<String> previousList = new ArrayList<>();
+    if (user.previous.list != null) {
+      previousList = user.previous.list;
+    }
 
     // Nothing to update. Return `true` as if the action succeeded.
     if (previousList.contains(diaryLID)) {

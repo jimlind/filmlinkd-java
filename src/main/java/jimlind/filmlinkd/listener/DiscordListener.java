@@ -158,8 +158,13 @@ public class DiscordListener extends ListenerAdapter {
         .addKeyValue("jdaMessage", jdaMessage)
         .log();
 
-    // If the entry doesn't exist in the users previous entry list write it
-    if (!scrapedResult.user.previous.list.contains(entry.lid)) {
+    boolean entryIsNew =
+        scrapedResult.user.previous.list == null
+            || scrapedResult.user.previous.list.isEmpty()
+            || !scrapedResult.user.previous.list.contains(entry.lid);
+
+    // If the entry is new write attempt to write it to the database
+    if (entryIsNew) {
       boolean updateSuccess =
           firestoreManager.updateUserPrevious(
               entry.userLid, entry.lid, entry.publishedDate, entry.link);

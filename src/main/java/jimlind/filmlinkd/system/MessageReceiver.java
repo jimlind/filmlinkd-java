@@ -2,14 +2,13 @@ package jimlind.filmlinkd.system;
 
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.pubsub.v1.PubsubMessage;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jimlind.filmlinkd.EntryCache;
 import jimlind.filmlinkd.factory.ScrapedResultFactory;
 import jimlind.filmlinkd.model.ScrapedResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiver {
@@ -74,10 +73,22 @@ public class MessageReceiver implements com.google.cloud.pubsub.v1.MessageReceiv
   // We expect duplicates to come in from the PubSub queue all the time so we need to limit when we
   // actually want them to be put in the queue for processing.
   private static boolean shouldBeQueued(ScrapedResult scrapedResult) {
+    // If there is an override then it should always be queued
     if (scrapedResult.message.hasChannelOverride()) {
       return true;
     }
 
+    // If entry matches the most recent previous do not queue, this is most common
+    if (scrapedResult.user.getMostRecentPrevious().equals(scrapedResult.message.entry.lid)) {
+      return false;
+    }
+
+    // If previous result list doesn't exist it can't contain the entry
+    if (scrapedResult.user.previous.list == null || scrapedResult.user.previous.list.isEmpty()) {
+      return true;
+    }
+
+    // If entry matches any of the previous logged entries do not queue
     return !scrapedResult.user.previous.list.contains(scrapedResult.message.entry.lid);
   }
 }
